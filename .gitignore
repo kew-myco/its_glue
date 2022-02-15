@@ -1,1 +1,4 @@
 seq_conda/
+data/
+temp/
+.spyproject/
