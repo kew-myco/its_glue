@@ -1,64 +1,73 @@
+#   .__  __           __________.__              .__  .__                 #
+#   |__|/  |_  ______ \______   \__|_____   ____ |  | |__| ____   ____    #
+#   |  \   __\/  ___/  |     ___/  \____ \_/ __ \|  | |  |/    \_/ __ \   #
+#   |  ||  |  \___ \   |    |   |  |  |_> >  ___/|  |_|  |   |  \  ___/   #
+#   |__||__| /____  >  |____|   |__|   __/ \___  >____/__|___|  /\___  >  #
+#                 \/               |__|        \/             \/     \/   #
+#                                                                         #
+##                                                                       ##
+###                                                                     ###  
+####                                                                   ####    
+####                                                                   ####
+####         Run from top level of seq_pipeline project folder         ####
+####         By default, expects .ab1 files in the format:             ####
+####         Country_Site_Plate_Well_ITS*.ext                          ####
+####                                                                   ####
+# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
+
 ### basecalling
+# Using Tracy since 
+# i) it's recent
+# ii) it's expressly designed for (modern) Sanger data
 
 # basecall the forward seq for use as reference
-tracy basecall -f fasta -o data/fasta/6_512/6_512_1_ref.fa data/traces/6_512/abi/6_512_1_ITS1F_A01.ab1
+for file in ./data/traces/*ITS1F* ; do
+    extn=".fa"
+    xbase=${file##*/} #get filename
+    xpref=${xbase%.*} #drop extension
+    xout=$xpref$extn
+    tracy basecall -f fasta -o data/fasta/$xout $file \
+    &>> logs/basecall_log.txt
+done
 
 # assemble reverse using forward seq as reference
-# -t specifies trimming stringency (default), -d set to 1 for hard consensus, i.e. 100% match
-tracy assemble -t 1 -d 0.5 -r data/fasta/6_512/6_512_1_ref.fa -o data/fasta/6_512/6_512_1_A01 data/traces/6_512/abi/6_512_1_ITS4_A01.ab1
-
-
-### itsexpress
-
-# basecall with phred to fastq
-
-## call bases with Phred
-
-./scripts/phred_calls_no_trim.sh ./data/traces/6_512/abi ./data/phd/6_512
-
-## convert phd to fastq
-
-for file in ./data/phd/6_512/*.phd.1 ; do
-    python3 ./scripts/phd2fastq.py $file -od ./data/fastq/6_512/
-    echo 'converted' $file
+# -t specifies trimming stringency (default), 
+# -d set to 1 for hard consensus, i.e. 100% match. 
+# -d 0.5 seems to get decent consensus without Ns
+# tracy doc/output sparse, discussing with author on github (feb 2022)
+for file in ./data/traces/*ITS4* ; do
+    xbase=${file##*/}
+    xpref=${xbase%.*}
+    wellcode=$(awk -F'_ITS' '{print $1}' <<< "$xbase") #code excluding primer id
+    reffile=(./data/fasta/$wellcode*)
+    
+    tracy assemble -d 0.5 \
+    -r $reffile \
+    -o data/tracy_assemble/$wellcode \
+    $file \
+    &>> logs/assem_log.txt # log STDOUT and STDERR to catch assembly failures
 done
 
-## get RC of ITS4 for assembly
+### Extract gap free consensus 
 
-for file in ./data/fastq/6_512/*ITS4* ; do
-    python3 ./scripts/rc_fastq.py $file -od ./data/fastq/6_512/
-    echo 'transformed' $file
-    #rm $file
+for file in ./data/tracy_assemble/*.json ; do
+    python3 ./scripts/consensus_from_tracy_json.py $file -od ./data/fasta
+    echo 'extracted consensus' $file
 done
 
-#attempt vsearch merge
-
-vsearch --fastq_mergepairs data/fastq/6_512/6_512_1_ITS1F_A01.fastq --reverse data/fastq/6_512/6_512_1_ITS4_A01.fastq --fastqout vsearch_mergetest.fastq \
---fastq_qmax 93 --fastq_allowmergestagger --fastq_truncqual 10
+### Collate seqs?
 
 
-# attempt itsxpress
-# only works with illumina encoded fastqs!
-# doesn't work without qual data
+###  xtract ITS with ITSx
 
-itsxpress --fastq data/fastq/6_512/6_512_1_ITS1F_A01.fastq --single_end \
---region ALL --taxa Fungi --threads 2 \
---tempdir temp/ --keeptemp \
---log logfile.txt --outfile trimmed_reads.fastq
+# ITSx with tracy -d 1 can detect ITS1 and ITS2 but not surrounding SSU/LSU. 
+# Presumably because forming the consensus seq trims off these regions.
+# So I guess it detects 5.8S and just takes either side of it to be ITS.
+# hypothesis confirmed - using forward strand nets us LSU
 
-itsxpress --fastq data/fasta/6_512/6_512_1_A01_con.fq --single_end \
---region ALL --taxa Fungi --threads 2 \
---tempdir temp/ --keeptemp \
---log logfile.txt --outfile trimmed_reads.fastq
-
-# attempt ITSx
+# Using tracy assemble with -d 0.5 to get consensus sequence, 
+# rather than -d 1, gives a con seq that lets us catch SSU for 6_512_1_A01.
+# But I imagine the end of the seq is garbage?
+# Catching SSU is most important, seqs then start at same location!
 
 ITSx -i data/fasta/6_512/6_512_1_A01_con.fasta -o A01
-# ITSx works! Sort of. Can detect ITS1 and ITS2 but not surrounding SSU/LSU. Presumably because forming the consensus seq trims off these regions.
-# So I guess it detects 5.8S and just takes either side of it to be ITS.
-
-#test on non consensus
-
-ITSx -i data/fasta/6_512/6_512_1_ITS1F_A01.fasta -o A01_single
-#hypothesis confirmed - using forward strand nets us LSU
-#Using tracy assemble with -d 0.5 to get consensus sequence, rather than -d 1, gives a con seq that lets us catch SSU for 6_512_1_A01. but I imagine the end of the seq is garbage?

@@ -2,3 +2,6 @@ seq_conda/
 data/
 temp/
 .spyproject/
+logs/
+archive/
+data0/
