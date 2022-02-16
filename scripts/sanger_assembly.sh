@@ -16,57 +16,35 @@
 ####                                                                   ####
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 
-### basecalling
+### basecalling/assembly
 # Using Tracy since 
 # i) it's recent
 # ii) it's expressly designed for (modern) Sanger data
 
-# basecall the forward seq for use as reference
-for file in ./data/traces/*ITS1F* ; do
-    extn=".fa"
-    xbase=${file##*/} #get filename
-    xpref=${xbase%.*} #drop extension
-    xout=$xpref$extn
-    tracy basecall -f fasta -o data/fasta/$xout $file \
-    &>> logs/basecall_log.txt # log to catch errors
-done
+# Tracy can output basecalls directly
+# .tsv output gives a sort of qual scores
 
-# basecall with tsv for qual scores
-# for file in ./data/traces/*ITS1F* ; do
-#    extn=".tsv"
-#    xbase=${file##*/} #get filename
-#    xpref=${xbase%.*} #drop extension
-#    xout=$xpref$extn
-#    tracy basecall -f tsv -o data/tsv/$xout $file \
-#    &>> logs/basecall_log.txt # log to catch errors
-# done
-
-# assemble reverse using forward seq as reference
+# assemble forward and reverse direct from traces
 # -t specifies trimming stringency (default), 
-# -d set to 1 for hard consensus, i.e. 100% match. 
-# -d 0.5 seems to get decent consensus without Ns
+# -f set to 1 for hard consensus, i.e. 100% match. 
+# -f 0.5 seems to get decent consensus without Ns
 # tracy doc/output sparse, discussing with author on github (feb 2022)
+
+# assemble without ref
 for file in ./data/traces/*ITS4* ; do
     xbase=${file##*/}
-    xpref=${xbase%.*}
     wellcode=$(awk -F'_ITS' '{print $1}' <<< "$xbase") #code excluding primer id
-    reffile=(./data/fasta/$wellcode*)
+    F='_ITS1F'
+    ffile=(./data/traces/$wellcode$F*)
     
-    tracy assemble -t 2 -d 0.5 \
-    -r $reffile \
+    ./tracy/tracy assemble --inccons \
     -o data/tracy_assemble/$wellcode \
-    --inccons \
     $file \
+    $ffile \
     &>> logs/assem_log.txt # log STDOUT and STDERR to catch assembly failures
 done
 
-### Extract gap free consensus 
-
-for file in ./data/tracy_assemble/*.json ; do
-    python3 ./scripts/consensus_from_tracy_json.py $file -od ./data/fasta
-    echo 'extracted consensus' $file
-done
-
+#### MUST UPDATE BELOW
 ### Collate seqs?
 
 cat ./data/fasta/*_con.fasta > ./data/fasta/con_list.fasta
