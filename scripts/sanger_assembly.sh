@@ -44,6 +44,9 @@ for file in ./data/traces/*ITS4* ; do
     &>> logs/assem_log.txt # log STDOUT and STDERR to catch assembly failures
 done
 
+# for 6_512, successful xtraction from 180 of X? number of seqs
+# add counter!
+
 #### MUST UPDATE BELOW
 ### Collate seqs?
 
