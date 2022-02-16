@@ -7,7 +7,8 @@
 #                                                                         #
 ##                                                                       ##
 ###                                                                     ###  
-####                                                                   ####    
+####         Author : Alex Byrne                                       ####    
+####         Contact : ablex7@gmail.com                                ####
 ####                                                                   ####
 ####         Run from top level of seq_pipeline project folder         ####
 ####         By default, expects .ab1 files in the format:             ####
@@ -27,8 +28,18 @@ for file in ./data/traces/*ITS1F* ; do
     xpref=${xbase%.*} #drop extension
     xout=$xpref$extn
     tracy basecall -f fasta -o data/fasta/$xout $file \
-    &>> logs/basecall_log.txt
+    &>> logs/basecall_log.txt # log to catch errors
 done
+
+# basecall with tsv for qual scores
+# for file in ./data/traces/*ITS1F* ; do
+#    extn=".tsv"
+#    xbase=${file##*/} #get filename
+#    xpref=${xbase%.*} #drop extension
+#    xout=$xpref$extn
+#    tracy basecall -f tsv -o data/tsv/$xout $file \
+#    &>> logs/basecall_log.txt # log to catch errors
+# done
 
 # assemble reverse using forward seq as reference
 # -t specifies trimming stringency (default), 
@@ -41,9 +52,10 @@ for file in ./data/traces/*ITS4* ; do
     wellcode=$(awk -F'_ITS' '{print $1}' <<< "$xbase") #code excluding primer id
     reffile=(./data/fasta/$wellcode*)
     
-    tracy assemble -d 0.5 \
+    tracy assemble -t 2 -d 0.5 \
     -r $reffile \
     -o data/tracy_assemble/$wellcode \
+    --inccons \
     $file \
     &>> logs/assem_log.txt # log STDOUT and STDERR to catch assembly failures
 done
@@ -57,6 +69,7 @@ done
 
 ### Collate seqs?
 
+cat ./data/fasta/*_con.fasta > ./data/fasta/con_list.fasta
 
 ###  xtract ITS with ITSx
 
@@ -70,4 +83,9 @@ done
 # But I imagine the end of the seq is garbage?
 # Catching SSU is most important, seqs then start at same location!
 
-ITSx -i data/fasta/6_512/6_512_1_A01_con.fasta -o A01
+ITSx -i ./data/fasta/con_list.fasta -o ./data/its_out/its \
+-t 'fungi' \
+--complement F \
+--graphical F \
+--save_regions 'ITS1,5.8S,ITS2' \
+--cpu 4
