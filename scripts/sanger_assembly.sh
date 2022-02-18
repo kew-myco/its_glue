@@ -16,6 +16,8 @@
 ####                                                                   ####
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 
+conda activate ./seq_conda
+
 ### basecalling/assembly
 # Using Tracy since 
 # i) it's recent
@@ -44,6 +46,20 @@ for file in ./data/traces/*ITS4* ; do
     &>> logs/assem_log.txt # log STDOUT and STDERR to catch assembly failures
 done
 
+# Sietse's data DOESN'T WORK DUE TO OUTDATED FILE TYPE
+for file in ./data0/traces/*ITS4* ; do
+    xbase=${file##*/}
+    wellcode=$(awk -F'_ITS' '{print $1}' <<< "$xbase") #code excluding primer id
+    F='_ITS1F'
+    ffile=(./data0/traces/$wellcode$F*)
+    
+    ./tracy/tracy assemble --inccons \
+    -o data0/tracy_assemble/$wellcode \
+    $file \
+    $ffile \
+    &>> logs/assem0_log.txt # log STDOUT and STDERR to catch assembly failures
+done
+
 # for 6_512, successful xtraction from 180 of X? number of seqs
 # add counter!
 
@@ -70,3 +86,9 @@ ITSx -i ./data/fasta/con_list.fasta -o ./data/its_out/its \
 --graphical F \
 --save_regions 'ITS1,5.8S,ITS2' \
 --cpu 4
+
+#join ITS1 5.8S ITS2
+
+
+#vsearch
+
