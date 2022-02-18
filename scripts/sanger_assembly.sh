@@ -1,3 +1,5 @@
+#!/usr/bin/env bash
+
 #   .__  __           __________.__              .__  .__                 #
 #   |__|/  |_  ______ \______   \__|_____   ____ |  | |__| ____   ____    #
 #   |  \   __\/  ___/  |     ___/  \____ \_/ __ \|  | |  |/    \_/ __ \   #
@@ -47,30 +49,29 @@ for file in ./data/traces/*ITS4* ; do
 done
 
 # Sietse's data DOESN'T WORK DUE TO OUTDATED FILE TYPE
-for file in ./data0/traces/*ITS4* ; do
-    xbase=${file##*/}
-    wellcode=$(awk -F'_ITS' '{print $1}' <<< "$xbase") #code excluding primer id
-    F='_ITS1F'
-    ffile=(./data0/traces/$wellcode$F*)
-    
-    ./tracy/tracy assemble --inccons \
-    -o data0/tracy_assemble/$wellcode \
-    $file \
-    $ffile \
-    &>> logs/assem0_log.txt # log STDOUT and STDERR to catch assembly failures
-done
+# for file in ./data0/traces/*ITS4* ; do
+#     xbase=${file##*/}
+#     wellcode=$(awk -F'_ITS' '{print $1}' <<< "$xbase") #code excluding primer id
+#     F='_ITS1F'
+#     ffile=(./data0/traces/$wellcode$F*)
+#    
+#    ./tracy/tracy assemble --inccons \
+#    -o data0/tracy_assemble/$wellcode \
+#     $file \
+#     $ffile \
+#     &>> logs/assem0_log.txt # log STDOUT and STDERR to catch assembly failures
+# done
 
 # for 6_512, successful xtraction from 180 of X? number of seqs
 # add counter!
 
-#### MUST UPDATE BELOW
 ### Collate seqs?
 
-cat ./data/fasta/*_con.fasta > ./data/fasta/con_list.fasta
+cat ./data/tracy_assemble/*cons.fasta > ./data/fasta/con_list.fasta
 
 ###  xtract ITS with ITSx
 
-# ITSx with tracy -d 1 can detect ITS1 and ITS2 but not surrounding SSU/LSU. 
+# ITSx with tracy -d 1 can detect ITS1 and ITS2 but often not surrounding SSU/LSU. 
 # Presumably because forming the consensus seq trims off these regions.
 # So I guess it detects 5.8S and just takes either side of it to be ITS.
 # hypothesis confirmed - using forward strand nets us LSU
@@ -80,7 +81,7 @@ cat ./data/fasta/*_con.fasta > ./data/fasta/con_list.fasta
 # But I imagine the end of the seq is garbage?
 # Catching SSU is most important, seqs then start at same location!
 
-ITSx -i ./data/fasta/con_list.fasta -o ./data/its_out/its \
+ITSx -i ./data/fasta/con_list.fasta -o ./data/itsx_out/its \
 -t 'fungi' \
 --complement F \
 --graphical F \
@@ -89,6 +90,19 @@ ITSx -i ./data/fasta/con_list.fasta -o ./data/its_out/its \
 
 #join ITS1 5.8S ITS2
 
+python3 ./scripts/itsx_its_cat.py \
+'./data/itsx_out/its.ITS1.fasta' \
+'./data/itsx_out/its.5_8S.fasta' \
+'./data/itsx_out/its.ITS2.fasta' \
+-op './results/cat_its.fa'
 
-#vsearch
+#vsearch with fixed seed
+
+vsearch --sintax ./results/cat_its.fa \
+--db ./ext_dbs/utax_unite8.3.gz \
+--sintax_cutoff 0.95 \
+--tabbedout ./results/vsearchres
+
+
+
 
