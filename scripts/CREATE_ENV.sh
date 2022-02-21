@@ -17,5 +17,6 @@ chmod +x ./tracy/tracy
 conda create -p ./seq_conda
 conda activate ./seq_conda
 conda install -c bioconda itsx vsearch
+conda install -c conda-forge biopython
 
 
