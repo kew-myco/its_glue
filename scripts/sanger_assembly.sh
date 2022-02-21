@@ -14,7 +14,7 @@
 ####                                                                   ####
 ####         Run from top level of seq_pipeline project folder         ####
 ####         By default, expects .ab1 files in the format:             ####
-####         Country_Site_Plate_Well_ITS*.ext                          ####
+####         samplecode_ITS*.ext                                       ####
 ####                                                                   ####
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 
@@ -37,12 +37,12 @@ conda activate ./seq_conda
 # assemble without ref
 for file in ./data/traces/*ITS4* ; do
     xbase=${file##*/}
-    wellcode=$(awk -F'_ITS' '{print $1}' <<< "$xbase") #code excluding primer id
+    code=$(awk -F'_ITS' '{print $1}' <<< "$xbase") #code excluding primer id
     F='_ITS1F'
-    ffile=(./data/traces/$wellcode$F*)
+    ffile=(./data/traces/$code$F*)
     
     ./tracy/tracy assemble --inccons \
-    -o data/tracy_assemble/$wellcode \
+    -o data/tracy_assemble/$code \
     $file \
     $ffile \
     &>> logs/assem_log.txt # log STDOUT and STDERR to catch assembly failures
