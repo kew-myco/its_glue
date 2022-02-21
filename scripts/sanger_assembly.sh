@@ -67,7 +67,12 @@ done
 
 ### Collate seqs?
 
-cat ./data/tracy_assemble/*cons.fasta > ./data/fasta/con_list.fasta
+for file in ./data/tracy_assemble/*.json ; do
+    python3 ./scripts/consensus_from_tracy_json.py $file -od ./data/fasta
+    echo 'extracted consensus' $file
+done
+
+cat ./data/fasta/*con.fasta > ./data/fasta/con_list.fasta
 
 ###  xtract ITS with ITSx
 
@@ -95,6 +100,18 @@ python3 ./scripts/itsx_its_cat.py \
 './data/itsx_out/its.5_8S.fasta' \
 './data/itsx_out/its.ITS2.fasta' \
 -op './results/cat_its.fa'
+
+# cluster to OTUs
+
+vsearch --cluster_fast './results/cat_its.fa' \
+--centroids './results/centroids.fa' \
+--consout './results/cluster_cons.fa' \
+--msaout './results/OTU_msa.fa' \
+--uc './results/OTU_cluster_data.uc'
+--sizeorder
+--id 0.97
+--clusterout_sort
+
 
 #vsearch with fixed seed
 
