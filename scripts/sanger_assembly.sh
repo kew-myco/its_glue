@@ -14,10 +14,11 @@
 ####                                                                   ####
 ####         Run from top level of seq_pipeline project folder         ####
 ####         By default, expects .ab1 files in the format:             ####
-####         samplecode_ITS*.ext                                       ####
+####         samplecode_ITS*.ext - The '_ITS' bit is key               ####
 ####                                                                   ####
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 
+# having first run CREATE_ENV.sh:
 conda activate ./seq_conda
 
 ### basecalling/assembly
@@ -112,13 +113,12 @@ vsearch --cluster_fast './results/cat_its.fa' \
 --id 0.97
 --clusterout_sort
 
-
 #vsearch with fixed seed
 
-vsearch --sintax ./results/cat_its.fa \
+vsearch --sintax './results/cat_its.fa' \
 --db ./ext_dbs/utax_unite8.3.gz \
 --sintax_cutoff 0.95 \
---tabbedout ./results/vsearchres
+--tabbedout './results/vsearchres'
 
 
 
