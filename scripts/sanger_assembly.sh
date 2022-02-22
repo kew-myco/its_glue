@@ -18,7 +18,7 @@
 ####                                                                   ####
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 
-# having first run CREATE_ENV.sh:
+# FIRST TIME? RUN CREATE_ENV.sh:
 conda activate ./seq_conda
 
 ### basecalling/assembly
@@ -102,23 +102,21 @@ python3 ./scripts/itsx_its_cat.py \
 './data/itsx_out/its.ITS2.fasta' \
 -op './results/cat_its.fa'
 
-# cluster to OTUs
+# vsearch cluster to OTUs
 
 vsearch --cluster_fast './results/cat_its.fa' \
 --centroids './results/centroids.fa' \
---consout './results/cluster_cons.fa' \
---msaout './results/OTU_msa.fa' \
 --uc './results/OTU_cluster_data.uc'
 --sizeorder
 --id 0.97
 --clusterout_sort
 
-#vsearch with fixed seed
+# vsearch sintax, bootstrap support 0.8 per Edgar (https://www.drive5.com/usearch/manual/cmd_sintax.html)
 
-vsearch --sintax './results/cat_its.fa' \
+vsearch --sintax './results/centroids.fa' \
 --db ./ext_dbs/utax_unite8.3.gz \
---sintax_cutoff 0.95 \
---tabbedout './results/vsearchres'
+--sintax_cutoff 0.8 \
+--tabbedout './results/vsearchres.tsv'
 
 
 
