@@ -103,20 +103,23 @@ python3 ./scripts/itsx_its_cat.py \
 -op './results/cat_its.fa'
 
 # vsearch cluster to OTUs
+# --id 0.97 : 97% pairwise to match to an OTU. This isn't ideal but it's certainly standard
+# --sizeorder: abundance trumps distance for ties
+# --maxaccepts: number of decent hits to look for before making a decision (default 1!)
 
-vsearch --cluster_fast './results/cat_its.fa' \
---centroids './results/centroids.fa' \
---uc './results/OTU_cluster_data.uc'
---sizeorder
---id 0.97
---clusterout_sort
+vsearch --cluster_size './results/cat_its.fa' \
+--centroids './results/OTU_centroids.fa' \
+--otutabout './results/OTU_cluster_memb.tsv'
+--uc './results/OTU_cluster_data.uc' \
+--id 0.97 \
+--sizeorder --clusterout_sort --maxaccepts 5
 
 # vsearch sintax, bootstrap support 0.8 per Edgar (https://www.drive5.com/usearch/manual/cmd_sintax.html)
 
 vsearch --sintax './results/centroids.fa' \
 --db ./ext_dbs/utax_unite8.3.gz \
 --sintax_cutoff 0.8 \
---tabbedout './results/vsearchres.tsv'
+--tabbedout './results/sintax_class.tsv'
 
 
 
