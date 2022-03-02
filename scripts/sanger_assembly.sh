@@ -45,7 +45,7 @@ for file in ./data/traces/*ITS4* ; do
     
     ./tracy/tracy consensus \
     -o data/tracy_assemble/$code$tag \
-    -q 0 -u 0 -r 0 -s 0 \
+    -q 0 -u 0 -r 0 -s 0 -i \
     -b $code \
     $ffile \
     $file \
@@ -55,20 +55,7 @@ done
 # no trimming performed with -qurs
 
 # Sietse's data DOESN'T WORK DUE TO OUTDATED FILE TYPE
-# for file in ./data0/traces/*ITS4* ; do
-#     xbase=${file##*/}
-#     wellcode=$(awk -F'_ITS' '{print $1}' <<< "$xbase") #code excluding primer id
-#     F='_ITS1F'
-#     ffile=(./data0/traces/$wellcode$F*)
-#    
-#    ./tracy/tracy assemble --inccons \
-#    -o data0/tracy_assemble/$wellcode \
-#     $file \
-#     $ffile \
-#     &>> logs/assem0_log.txt # log STDOUT and STDERR to catch assembly failures
-# done
 
-# for 6_512, successful xtraction from 180 of X? number of seqs
 # add counter!
 
 ### Collate seqs?
@@ -90,6 +77,36 @@ cat ./data/tracy_assemble/*cons.fa > ./data/con_list.fasta
 ITSx -i ./data/con_list.fasta -o ./data/its_out/its \
 -t 'fungi' \
 --complement F \
+--graphical F \
+--save_regions 'ITS1,5.8S,ITS2' \
+--cpu 4
+
+# extract forward and reverse strands from sequences where no ITS could be recognised in the consensus seq
+# init empty array
+# for line in its_no_detections, which corresponds to a sample code
+# find the appropriate txt file in tracy assemble data
+# read it into memory
+# extract everything before ' Align'
+# remove bracketed things
+# append to array
+# finally print all that out seperating with newlines
+
+nd_ar=()
+while read p; do
+  echo $p
+  pt=(./data/tracy_assemble/$p*_cons.txt)
+  c=`cat $pt`
+  c=${c%%[[:space:]]Align*}
+  c=${c//(*)/}
+  nd_ar+=($c)
+done < data/its_out/its_no_detections.txt
+
+printf "%s\n" "${nd_ar[@]}" > noits.fa
+
+# try ITSx on those, now checking complement also
+
+ITSx -i ./noits.fa -o ./data/its_out/sing \
+-t 'fungi' \
 --graphical F \
 --save_regions 'ITS1,5.8S,ITS2' \
 --cpu 4
