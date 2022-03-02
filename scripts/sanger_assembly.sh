@@ -87,7 +87,7 @@ cat ./data/tracy_assemble/*cons.fa > ./data/con_list.fasta
 # But I imagine the end of the seq is garbage?
 # Catching SSU is most important, seqs then start at same location!
 
-ITSx -i ./data/con_list.fasta -o ./data/itsx_out/its \
+ITSx -i ./data/con_list.fasta -o ./data/its_out/its \
 -t 'fungi' \
 --complement F \
 --graphical F \
