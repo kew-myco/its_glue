@@ -10,8 +10,7 @@ mkdir ./ext_dbs
 mkdir ./logs
 mkdir ./results
 
-wget https://github.com/gear-genomics/tracy/releases/download/v0.6.1/tracy_v0.6.1_linux_x86_64bit
-mv tracy_v0.6.1_linux_x86_64bit ./tracy/tracy
+wget -O ./tracy/tracy https://github.com/gear-genomics/tracy/releases/download/v0.7.1/tracy_v0.7.1_linux_x86_64bit
 chmod +x ./tracy/tracy
 
 conda create -p ./seq_conda

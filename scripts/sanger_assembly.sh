@@ -41,13 +41,18 @@ for file in ./data/traces/*ITS4* ; do
     code=$(awk -F'_ITS' '{print $1}' <<< "$xbase") #code excluding primer id
     F='_ITS1F'
     ffile=(./data/traces/$code$F*)
+    tag='_cons'
     
-    ./tracy/tracy assemble --inccons \
-    -o data/tracy_assemble/$code \
-    $file \
+    ./tracy/tracy consensus \
+    -o data/tracy_assemble/$code$tag \
+    -q 0 -u 0 -r 0 -s 0 \
+    -b $code \
     $ffile \
-    &>> logs/assem_log.txt # log STDOUT and STDERR to catch assembly failures
+    $file \
+    &>> logs/cons_log.txt 
 done
+# STDOUT and STDERR logged
+# no trimming performed with -qurs
 
 # Sietse's data DOESN'T WORK DUE TO OUTDATED FILE TYPE
 # for file in ./data0/traces/*ITS4* ; do
@@ -68,12 +73,7 @@ done
 
 ### Collate seqs?
 
-for file in ./data/tracy_assemble/*.json ; do
-    python3 ./scripts/consensus_from_tracy_json.py $file -od ./data/fasta
-    echo 'extracted consensus' $file
-done
-
-cat ./data/fasta/*con.fasta > ./data/fasta/con_list.fasta
+cat ./data/tracy_assemble/*cons.fa > ./data/con_list.fasta
 
 ###  xtract ITS with ITSx
 
@@ -87,7 +87,7 @@ cat ./data/fasta/*con.fasta > ./data/fasta/con_list.fasta
 # But I imagine the end of the seq is garbage?
 # Catching SSU is most important, seqs then start at same location!
 
-ITSx -i ./data/fasta/con_list.fasta -o ./data/itsx_out/its \
+ITSx -i ./data/con_list.fasta -o ./data/itsx_out/its \
 -t 'fungi' \
 --complement F \
 --graphical F \
@@ -97,9 +97,9 @@ ITSx -i ./data/fasta/con_list.fasta -o ./data/itsx_out/its \
 #join ITS1 5.8S ITS2
 
 python3 ./scripts/itsx_its_cat.py \
-'./data/itsx_out/its.ITS1.fasta' \
-'./data/itsx_out/its.5_8S.fasta' \
-'./data/itsx_out/its.ITS2.fasta' \
+'./data/its_out/its.ITS1.fasta' \
+'./data/its_out/its.5_8S.fasta' \
+'./data/its_out/its.ITS2.fasta' \
 -op './results/cat_its.fa'
 
 # vsearch cluster to OTUs
@@ -109,14 +109,14 @@ python3 ./scripts/itsx_its_cat.py \
 
 vsearch --cluster_size './results/cat_its.fa' \
 --centroids './results/OTU_centroids.fa' \
---otutabout './results/OTU_cluster_memb.tsv'
+--otutabout './results/OTU_cluster_memb.tsv' \
 --uc './results/OTU_cluster_data.uc' \
 --id 0.97 \
 --sizeorder --clusterout_sort --maxaccepts 5
 
 # vsearch sintax, bootstrap support 0.8 per Edgar (https://www.drive5.com/usearch/manual/cmd_sintax.html)
 
-vsearch --sintax './results/centroids.fa' \
+vsearch --sintax './results/OTU_centroids.fa' \
 --db ./ext_dbs/utax_unite8.3.gz \
 --sintax_cutoff 0.8 \
 --tabbedout './results/sintax_class.tsv'
