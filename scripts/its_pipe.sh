@@ -25,17 +25,9 @@ conda activate ./seq_conda
 # Using Tracy since 
 # i) it's recent
 # ii) it's expressly designed for (modern) Sanger data
-
-# Tracy can output basecalls directly
-# .tsv output gives a sort of qual scores
+# iii) I've had active discussions/collaboration from the devs
 
 # assemble forward and reverse direct from traces
-# -t specifies trimming stringency (default), 
-# -f set to 1 for hard consensus, i.e. 100% match. 
-# -f 0.5 seems to get decent consensus without Ns
-# tracy doc/output sparse, discussing with author on github (feb 2022)
-
-# assemble without ref
 for file in ./data/traces/*ITS4* ; do
     xbase=${file##*/}
     code=$(awk -F'_ITS' '{print $1}' <<< "$xbase") #code excluding primer id
@@ -58,21 +50,11 @@ done
 
 # add counter!
 
-### Collate seqs?
+### Collate seqs
 
 cat ./data/tracy_assemble/*cons.fa > ./data/con_list.fasta
 
 ###  xtract ITS with ITSx
-
-# ITSx with tracy -d 1 can detect ITS1 and ITS2 but often not surrounding SSU/LSU. 
-# Presumably because forming the consensus seq trims off these regions.
-# So I guess it detects 5.8S and just takes either side of it to be ITS.
-# hypothesis confirmed - using forward strand nets us LSU
-
-# Using tracy assemble with -d 0.5 to get consensus sequence, 
-# rather than -d 1, gives a con seq that lets us catch SSU for 6_512_1_A01.
-# But I imagine the end of the seq is garbage?
-# Catching SSU is most important, seqs then start at same location!
 
 ITSx -i ./data/con_list.fasta -o ./data/its_out/its \
 -t 'fungi' \
@@ -112,16 +94,12 @@ ITSx -i ./noits.fa -o ./data/its_out/sing \
 --cpu 4
 
 # cat these results - drop those we can't find ITS for, this is our major quality filter
-Clusters: 179 Size min 1, max 20, avg 1.5
-Singletons: 141, 53.2% of seqs, 78.8% of clusters
-
 cat ./data/its_out/*ITS1* > ./data/fasta/its1.fasta
 cat ./data/its_out/*5_8S* > ./data/fasta/5_8S.fasta
 cat ./data/its_out/*ITS2* > ./data/fasta/its2.fasta
 
 
-#join ITS1 5.8S ITS2
-
+#join ITS1 5.8S ITS2 per sample
 python3 ./scripts/itsx_its_cat.py \
 './data/fasta/its1.fasta' \
 './data/fasta/5_8S.fasta' \
