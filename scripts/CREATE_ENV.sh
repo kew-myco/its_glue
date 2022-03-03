@@ -4,7 +4,7 @@ mkdir ./data/
 mkdir ./data/traces
 mkdir ./data/tracy_assemble
 mkdir ./data/fasta
-mkdir ./data/itsx_out
+mkdir ./data/its_out
 mkdir ./tracy
 mkdir ./ext_dbs
 mkdir ./logs

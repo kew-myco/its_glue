@@ -14,33 +14,38 @@
 ####                                                                   ####
 ####         Run from top level of seq_pipeline project folder         ####
 ####         By default, expects .ab1 files in the format:             ####
-####         samplecode_ITS*.ext - The '_ITS' bit is key               ####
+####         samplecode_DIRECTION_*.ab1 - e.g '_R_' = reverse          ####
+####         reads. The * just means anything can come after.          ####
+####         The sample filenames MUST match before the direction      ####
+####         is given.                                                 ####
 ####                                                                   ####
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 
+while getopts tc:od:fr:rr:pf: flag
+do
+    case "${flag}" in
+        tc) trace_dir=${OPTARG};;
+        od) out_dir=${OPTARG};;
+        fr) f_read=${OPTARG};;
+        rr) r_read=${OPRTARG};;
+        pf) out_pref=${OPTARG};;
+    esac
+done
+
 # FIRST TIME? RUN CREATE_ENV.sh:
-conda activate ./seq_conda
+conda activate ./seq_conda || echo 'conda environment not set up! Have you run CREATE_ENV.sh?'
 
 ### basecalling/assembly
 # Using Tracy since 
 # i) it's recent
 # ii) it's expressly designed for (modern) Sanger data
-
-# Tracy can output basecalls directly
-# .tsv output gives a sort of qual scores
+# iii) I've had active discussions/collaboration from the devs
 
 # assemble forward and reverse direct from traces
-# -t specifies trimming stringency (default), 
-# -f set to 1 for hard consensus, i.e. 100% match. 
-# -f 0.5 seems to get decent consensus without Ns
-# tracy doc/output sparse, discussing with author on github (feb 2022)
-
-# assemble without ref
-for file in ./data/traces/*ITS4* ; do
+for file in ./data/traces/*$rr* ; do
     xbase=${file##*/}
-    code=$(awk -F'_ITS' '{print $1}' <<< "$xbase") #code excluding primer id
-    F='_ITS1F'
-    ffile=(./data/traces/$code$F*)
+    code=$(awk -F'_R_' '{print $1}' <<< "$xbase") #code excluding primer id
+    ffile=(./data/traces/$code$fr*)
     tag='_cons'
     
     ./tracy/tracy consensus \
@@ -53,30 +58,20 @@ for file in ./data/traces/*ITS4* ; do
 done
 # STDOUT and STDERR logged
 # no trimming performed with -qurs
+# only intersect taken with -i
 
 # Sietse's data DOESN'T WORK DUE TO OUTDATED FILE TYPE
 
 # add counter!
 
-### Collate seqs?
+### Collate seqs
 
 cat ./data/tracy_assemble/*cons.fa > ./data/con_list.fasta
 
 ###  xtract ITS with ITSx
 
-# ITSx with tracy -d 1 can detect ITS1 and ITS2 but often not surrounding SSU/LSU. 
-# Presumably because forming the consensus seq trims off these regions.
-# So I guess it detects 5.8S and just takes either side of it to be ITS.
-# hypothesis confirmed - using forward strand nets us LSU
-
-# Using tracy assemble with -d 0.5 to get consensus sequence, 
-# rather than -d 1, gives a con seq that lets us catch SSU for 6_512_1_A01.
-# But I imagine the end of the seq is garbage?
-# Catching SSU is most important, seqs then start at same location!
-
 ITSx -i ./data/con_list.fasta -o ./data/its_out/its \
 -t 'fungi' \
---complement F \
 --graphical F \
 --save_regions 'ITS1,5.8S,ITS2' \
 --cpu 4
@@ -103,7 +98,7 @@ done < data/its_out/its_no_detections.txt
 
 printf "%s\n" "${nd_ar[@]}" > noits.fa
 
-# try ITSx on those, now checking complement also
+# try ITSx on those
 
 ITSx -i ./noits.fa -o ./data/its_out/sing \
 -t 'fungi' \
@@ -112,16 +107,12 @@ ITSx -i ./noits.fa -o ./data/its_out/sing \
 --cpu 4
 
 # cat these results - drop those we can't find ITS for, this is our major quality filter
-Clusters: 179 Size min 1, max 20, avg 1.5
-Singletons: 141, 53.2% of seqs, 78.8% of clusters
-
 cat ./data/its_out/*ITS1* > ./data/fasta/its1.fasta
 cat ./data/its_out/*5_8S* > ./data/fasta/5_8S.fasta
 cat ./data/its_out/*ITS2* > ./data/fasta/its2.fasta
 
 
-#join ITS1 5.8S ITS2
-
+#join ITS1 5.8S ITS2 per sample
 python3 ./scripts/itsx_its_cat.py \
 './data/fasta/its1.fasta' \
 './data/fasta/5_8S.fasta' \
