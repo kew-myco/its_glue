@@ -21,19 +21,43 @@
 ####                                                                   ####
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 
-while getopts t:o:f:r:p: flag
+while getopts t:f:r:o:x flag
 do
     case "${flag}" in
         t) trace_dir=${OPTARG};;
-        o) out_dir=${OPTARG};;
         f) f_tag=${OPTARG};;
         r) r_tag=${OPTARG};;
-        p) out_pref=${OPTARG};;
+        o) out_dir=${OPTARG};;
+        x) overwrite="y";; 
     esac
 done
 
+if [[ "$trace_dir" == "" || "$f_tag" == "" || "$r_tag" == "" ]] ; then
+    echo "ERROR: flags -t, -f, and -r require arguments." >&2
+    exit 1
+fi
+
+if [[ "$out_dir" == "" ]] ; then
+    out_dir='.'
+fi
+
+if [[ "${overwrite}" == "y" ]] ; then
+    mkdir -p ${out_dir}/assembly ${out_dir}/its ${out_dir}/logs
+else
+    mkdir ${out_dir}/assembly ${out_dir}/its ${out_dir}/logs || echo "ERROR: output directory exists! Did you want to overwrite with -x?" ; exit 1
+fi
+
+echo "" # blank line to space output
+
 # FIRST TIME? RUN CREATE_ENV.sh:
-conda activate ./seq_conda || echo 'conda environment not set up! Have you run CREATE_ENV.sh?'
+CONDA_BASE=$(conda info --base)
+source $CONDA_BASE/etc/profile.d/conda.sh
+if conda activate ./seq_conda ; then
+    echo "activated conda env"
+else 
+    echo 'conda environment not set up! Have you run CREATE_ENV.sh?'
+    exit 1
+fi
 
 ### basecalling/assembly
 # Using Tracy since 
@@ -42,40 +66,53 @@ conda activate ./seq_conda || echo 'conda environment not set up! Have you run C
 # iii) I've had active discussions/collaboration from the devs
 
 # assemble forward and reverse direct from traces
+echo "running Tracy..."
+trac_count=0
 for file in ${trace_dir}/*${r_tag}* ; do
     xbase=${file##*/}
     code=$(awk -F"${r_tag}" '{print $1}' <<< "$xbase") #code excluding primer id
     ffile=(${trace_dir}/${code}*${f_tag}*)
     tag='_cons'
     
+    if
     ./tracy/tracy consensus \
-    -o data/tracy_assemble/$code$tag \
+    -o ${out_dir}/assembly/$code$tag \
     -q 0 -u 0 -r 0 -s 0 -i \
     -b $code \
     $ffile \
     $file \
-    &>> logs/cons_log.txt 
+    &>> ${out_dir}/logs/cons_log.txt ;
+    
+    then
+    let trac_count++ 
+    
+    else 
+    echo "assembly failure for ${code}!"
+    
+    fi
+    
 done
+echo "assembled ${trac_count} samples"
 
 # STDOUT and STDERR logged
 # no trimming performed with -qurs
 # only intersect taken with -i
 
-# Sietse's data DOESN'T WORK DUE TO OUTDATED FILE TYPE
-
 # add counter!
 
 ### Collate seqs
 
-cat ./data/tracy_assemble/*cons.fa > ./data/tracy_assemble/con_list.fasta
+cat ${out_dir}/assembly/*cons.fa > ${out_dir}/assembly/con_list.fasta
 
 ###  xtract ITS with ITSx
-
-ITSx -i ./data/tracy_assemble/con_list.fasta -o ./data/its_out/its \
+echo "running ITSx..."
+ITSx -i ${out_dir}/assembly/con_list.fasta -o ${out_dir}/its/its \
 -t 'fungi' \
 --graphical F \
 --save_regions 'ITS1,5.8S,ITS2' \
---cpu 4
+--cpu 4 \
+&>> ${out_dir}/logs/its_cons_log.txt
+
 
 # extract forward and reverse strands from sequences where no ITS could be recognised in the consensus seq
 # init empty array
@@ -88,34 +125,49 @@ ITSx -i ./data/tracy_assemble/con_list.fasta -o ./data/its_out/its \
 # finally print all that out seperating with newlines
 
 nd_ar=()
+nd_count=0
 while read p; do
-  echo $p
-  pt=(./data/tracy_assemble/$p*_cons.txt)
+
+  pt=(${out_dir}/assembly/${p}*_cons.txt)
+  
   c=`cat $pt`
   c=${c%%[[:space:]]Align*}
   c=${c//(*)/}
+  
   nd_ar+=($c)
-done < data/its_out/its_no_detections.txt
+  
+  let nd_count++
+  
+done < ${out_dir}/its/its_no_detections.txt
 
-printf "%s\n" "${nd_ar[@]}" > ./data/its_out/noconits.fa
+if [[ $nd_count -ne 0 ]] ; then
+echo "no ITS detected in consensus for $nd_count samples, trying single direction strands..."
+fi
+
+printf "%s\n" "${nd_ar[@]}" > ${out_dir}/its/noconits.fa
+
 
 # try ITSx on those
-
-ITSx -i ./data/its_out/noconits.fa -o ./data/its_out/sing \
+ITSx -i ${out_dir}/its/noconits.fa -o ${out_dir}/its/sing \
 -t 'fungi' \
 --graphical F \
 --save_regions 'ITS1,5.8S,ITS2' \
---cpu 4
+--cpu 4 \
+&>> ${out_dir}/logs/its_sing_log.txt
 
-# cat these results - drop those we can't find ITS for, this is our major quality filter
-cat ./data/its_out/*ITS1* > ./data/fasta/its1.fasta
-cat ./data/its_out/*5_8S* > ./data/fasta/5_8S.fasta
-cat ./data/its_out/*ITS2* > ./data/fasta/its2.fasta
+echo "sorting results..."
+
+# cat results - drop those we can't find ITS for, this is our major quality filter
+cat ${out_dir}/its/*ITS1* > ${out_dir}/its/its1.merge.fa
+cat ${out_dir}/its/*5_8S* > ${out_dir}/its/5_8S.merge.fa
+cat ${out_dir}/its/*ITS2* > ${out_dir}/its/its2.merge.fa
 
 
 #join ITS1 5.8S ITS2 per sample
 python3 ./scripts/itsx_its_cat.py \
-'./data/fasta/its1.fasta' \
-'./data/fasta/5_8S.fasta' \
-'./data/fasta/its2.fasta' \
--op './results/cat_its.fa'
+"${out_dir}/its/its1.merge.fa" \
+"${out_dir}/its/5_8S.merge.fa" \
+"${out_dir}/its/its2.merge.fa" \
+-op "${out_dir}/its/merged_its.fasta"
+
+echo "done!"

@@ -6,7 +6,7 @@ do
     esac
 done
 
-if [ -d "${scf_in}" ]; then 
+if [ -d "${scf_in}" ] ; then 
     for file in ${scf_in}/* ; do
         xbase=${file##*/}
         
