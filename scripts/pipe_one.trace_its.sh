@@ -21,14 +21,14 @@
 ####                                                                   ####
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 
-while getopts tc:od:fr:rr:pf: flag
+while getopts t:o:f:r:p: flag
 do
     case "${flag}" in
-        tc) trace_dir=${OPTARG};;
-        od) out_dir=${OPTARG};;
-        fr) f_read=${OPTARG};;
-        rr) r_read=${OPRTARG};;
-        pf) out_pref=${OPTARG};;
+        t) trace_dir=${OPTARG};;
+        o) out_dir=${OPTARG};;
+        f) f_tag=${OPTARG};;
+        r) r_tag=${OPTARG};;
+        p) out_pref=${OPTARG};;
     esac
 done
 
@@ -42,10 +42,10 @@ conda activate ./seq_conda || echo 'conda environment not set up! Have you run C
 # iii) I've had active discussions/collaboration from the devs
 
 # assemble forward and reverse direct from traces
-for file in $tc/*$rr* ; do
+for file in ${trace_dir}/*${r_tag}* ; do
     xbase=${file##*/}
-    code=$(awk -F'_R_' '{print $1}' <<< "$xbase") #code excluding primer id
-    ffile=($tc/$code$fr*)
+    code=$(awk -F"${r_tag}" '{print $1}' <<< "$xbase") #code excluding primer id
+    ffile=(${trace_dir}/${code}*${f_tag}*)
     tag='_cons'
     
     ./tracy/tracy consensus \
@@ -56,6 +56,7 @@ for file in $tc/*$rr* ; do
     $file \
     &>> logs/cons_log.txt 
 done
+
 # STDOUT and STDERR logged
 # no trimming performed with -qurs
 # only intersect taken with -i
