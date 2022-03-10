@@ -3,9 +3,15 @@
 
 ## setup
 
-First run CREATE_ENV.sh to set up the environment (you might need to make it executable with chmod +x CREATE_ENV.sh
+First run CREATE_ENV.sh to set up the environment. You'll probably need to chmod +x the scripts
 
-put the trace files you want to run in data/traces (this will change to a user specified location)
+then run 
+```
+./scripts/pipe_one.trace_its.sh -t [path/to/traces/directory] -f [fw_tag] -r [rev_tag] -o [path/to/output]
+```
+-f and -r specify the tags used to identify forward and reverse reads in the filenames. They should be last before the extension and the filenames for fw and reverse reads should otherwise be identical.
 
-then run through the steps in sanger_assembly.sh!
+Play with the script if you need to change parameters.
+
+pipe_two.cluster_classify.sh contains various commands for classifying and clustering, but it's not yet wrapped up into a command line utility and still needs work.
 
