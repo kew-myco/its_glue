@@ -168,6 +168,6 @@ python3 ./scripts/modules/itsx_its_cat.py \
 "${out_dir}/its/its1.merge.fa" \
 "${out_dir}/its/5_8S.merge.fa" \
 "${out_dir}/its/its2.merge.fa" \
--op "${out_dir}"
+-op "${out_dir}/cat_its.fa"
 
 echo "done!"
