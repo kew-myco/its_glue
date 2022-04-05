@@ -10,10 +10,10 @@ vsearch --cluster_size '/home/blex/Documents/Kew/fungi_research/manuel/seqs.07_0
 --sizeorder --clusterout_sort --maxaccepts 5
 
 
-vsearch --sintax '/home/blex/Documents/Kew/fungi_research/manuel/seqs.07_03_22/pipe_out/OTU/OTU_centroids.fa' \
+vsearch --sintax '/home/blex/Documents/Kew/fungi_research/manuel/seqs.07_03_22/pipe_out/its/its.ITS1.fasta' \
 --db '/home/blex/Documents/Kew/fungi_research/genetics/seq_pipeline/ext_dbs/db_formatted.fasta' \
 --sintax_cutoff 0.8 \
---tabbedout '/home/blex/Documents/Kew/fungi_research/manuel/seqs.07_03_22/pipe_out/OTU/sintax_class.tsv'
+--tabbedout '/home/blex/Documents/Kew/fungi_research/manuel/seqs.07_03_22/pipe_out/OTU/its1_sintax_class.tsv'
 
 ./scripts/xtract_notmatched_sintax /home/blex/Documents/Kew/fungi_research/manuel/seqs.07_03_22/pipe_out/OTU/sintax_class.tsv /home/blex/Documents/Kew/fungi_research/manuel/seqs.07_03_22/pipe_out/OTU/no_match.csv
 

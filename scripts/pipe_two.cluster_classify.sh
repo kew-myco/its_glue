@@ -30,7 +30,7 @@ vsearch --sintax './results/OTU_centroids.fa' \
 --tabbedout './results/sintax_class.tsv'
 
 # Sort unmatched reads, possibly into taxonomic groups?
-python3 ./scripts/xtract_notmatched_sintax.py '[SOURCE]' '[DESTINATION]'
+python3 ./scripts/modules/xtract_notmatched_sintax.py '[SOURCE]' '[DESTINATION]'
 
 # OPEN REFERENCE OTU ASSIGN
 # vsearch cluster to OTUs

@@ -164,10 +164,10 @@ cat ${out_dir}/its/*ITS2* > ${out_dir}/its/its2.merge.fa
 
 
 #join ITS1 5.8S ITS2 per sample
-python3 ./scripts/itsx_its_cat.py \
+python3 ./scripts/modules/itsx_its_cat.py \
 "${out_dir}/its/its1.merge.fa" \
 "${out_dir}/its/5_8S.merge.fa" \
 "${out_dir}/its/its2.merge.fa" \
--op "${out_dir}/its/merged_its.fasta"
+-op "${out_dir}"
 
 echo "done!"
