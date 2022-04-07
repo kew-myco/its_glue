@@ -24,9 +24,15 @@ The first section of the pipeline consists of basecalling the input trace files 
 This functionality is all wrapped into a single script:
 
 ```
-./scripts/pipe_one.trace_its.sh -t [path/to/traces/directory] -f [fw_tag] -r [rev_tag] -o [path/to/output]
+./scripts/pipe_one.trace_its.sh -t [path/to/traces/directory] \
+-f [fw_tag] \
+-r [rev_tag] \
+-o [path/to/output] \
+-x
 ```
--f and -r specify the tags used to identify forward and reverse reads in the filenames. They should be last before the extension and the filenames for fw and reverse reads should otherwise be identical.
+The script expects pairs of forward and reverse traces as .ab1 or .scf, all in one folder (i.e. not in subfolders). It will attempt the process on every trace file it finds in the input directory.
+
+-f and -r specify the tags used to identify forward and reverse reads in the filenames. They should be last before the extension and the filenames for fw and reverse reads should otherwise be identical. The -x flag indicates that you want to overwrite any previous runs of the pipeline to the specified output path.
 
 Play with the script if you need to change parameters, but you shouldn't need to (unless you're trying to ID something other than fungi)
 
