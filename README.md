@@ -1,10 +1,10 @@
 # ecto_pipe
 ###### Pipeline to take fungal ITS sequences from trace files to identified OTUs
 
-##Requirements
+## Requirements
 
 -  **A Unix environment** (e.g. Windows Subsytem for Linux if you're on Windows)  
--  **Conda** - I personally recommend miniconda
+-  **Conda** - I recommend miniconda
  
 Since this project is very much in development I also recommend cloning the repository with **git** and regularly using `git pull` so you can keep up with updates.
 
@@ -28,7 +28,15 @@ This functionality is all wrapped into a single script:
 ```
 -f and -r specify the tags used to identify forward and reverse reads in the filenames. They should be last before the extension and the filenames for fw and reverse reads should otherwise be identical.
 
-Play with the script if you need to change parameters.
+Play with the script if you need to change parameters, but you shouldn't need to (unless you're trying to ID something other than fungi)
 
-pipe_two.cluster_classify.sh contains various commands for classifying and clustering, but it's not yet wrapped up into a command line utility and still needs work.
+**ITS to OTUs/Identifcations**:
+
+pipe_two.cluster_classify.sh contains a workflow of commands for first classifying sequences against a reference database using **sintax** via **vsearch**, and then, if desired, clustering unmatched sequences into denovo OTUs. This process is both tricky and contentious, so for now the functionality is not wrapped up into a single command and is instead left open for the end user to implement how they see fit. More development to come.
+
+## Issues, Comments and Suggestions
+
+If you have issues with the pipeline please post them to the **Issues** tab of this GitHub repository. Please note that this is only for issues installing the pipeline itself or running it, not installing the dependencies. I'd love to have time to help people install it etc. but I unfortunately don't.
+
+If you have queries, comments, suggestions or questions about the pipeline please submit them to the **Discussions** tab. Hopefully this way we can build up something of a community FAQ.
 
