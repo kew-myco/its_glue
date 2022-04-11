@@ -1,5 +1,5 @@
 # ecto_pipe
-###### Pipeline to take fungal ITS sequences from trace files to identified OTUs
+###### Pipeline to take fungal ITS sequences from trace files to identified & denovo OTUs
 
 ## Requirements
 
