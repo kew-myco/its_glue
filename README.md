@@ -46,3 +46,7 @@ If you have issues with the pipeline please post them to the **Issues** tab of t
 
 If you have queries, comments, suggestions or questions about the pipeline please submit them to the **Discussions** tab. Hopefully this way we can build up something of a community FAQ.
 
+## Citing / Crediting
+
+I haven't really figured this bit out yet, but if you use this pipeline or data produced using it, please credit me in some way - I suppose either through authorship (if appropriate) or citing (for now) this page
+
