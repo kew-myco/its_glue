@@ -48,5 +48,5 @@ If you have queries, comments, suggestions or questions about the pipeline pleas
 
 ## Citing / Crediting
 
-I haven't really figured this bit out yet, but if you use this pipeline or data produced using it, please credit me in some way - I suppose either through authorship (if appropriate) or citing (for now) this page.
+I haven't really figured this bit out yet, but if you use this pipeline, or data produced from this pipeline, please credit me in some way - I suppose either through authorship (if appropriate) or citing (for now) this page.
 
