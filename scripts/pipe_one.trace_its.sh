@@ -95,7 +95,7 @@ for file in ${trace_dir}/*${r_tag}* ; do
     
 done
 
-if [ ${trac_count} -eq 0 ]
+if [ ${trac_count} -eq 0 ] ; then
 echo "ERROR: assembled 0 samples! Check log files for details"
 exit 1
 fi
