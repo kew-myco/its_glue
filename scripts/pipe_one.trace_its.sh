@@ -21,6 +21,8 @@
 ####                                                                   ####
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 
+set -e
+
 while getopts t:f:r:o:x flag
 do
     case "${flag}" in
@@ -92,6 +94,12 @@ for file in ${trace_dir}/*${r_tag}* ; do
     fi
     
 done
+
+if [ ${trac_count} -eq 0 ]
+echo "ERROR: assembled 0 samples! Check log files for details"
+exit 1
+fi
+
 echo "assembled ${trac_count} samples"
 
 # STDOUT and STDERR logged
