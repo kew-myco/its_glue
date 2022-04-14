@@ -31,6 +31,10 @@ do
         r) r_tag=${OPTARG};;
         o) out_dir=${OPTARG};;
         x) overwrite="y";; 
+        
+        *) echo "ERROR: invalid flag! Have you read the README?" 
+           exit 1
+           ;;
     esac
 done
 
@@ -53,7 +57,7 @@ echo "" # blank line to space output
 
 # FIRST TIME? RUN CREATE_ENV.sh:
 CONDA_BASE=$(conda info --base)
-source $CONDA_BASE/etc/profile.d/conda.sh
+source "$CONDA_BASE/etc/profile.d/conda.sh"
 if conda activate ./seq_conda ; then
     echo "activated conda env"
 else 
@@ -70,23 +74,23 @@ fi
 # assemble forward and reverse direct from traces
 echo "running Tracy..."
 trac_count=0
-for file in ${trace_dir}/*${r_tag}* ; do
-    xbase=${file##*/}
+for file in "${trace_dir}"/*"${r_tag}"* ; do
+    xbase="${file##*/}"
     code=$(awk -F"${r_tag}" '{print $1}' <<< "$xbase") #code excluding primer id
-    ffile=(${trace_dir}/${code}*${f_tag}*)
+    ffile=("${trace_dir}"/"${code}"*"${f_tag}"*)
     tag='_cons'
     
     if
     ./tracy/tracy consensus \
-    -o ${out_dir}/assembly/$code$tag \
+    -o "${out_dir}"/assembly/"$code""$tag" \
     -q 0 -u 0 -r 0 -s 0 -i \
-    -b $code \
-    $ffile \
-    $file \
-    &>> ${out_dir}/logs/cons_log.txt ;
+    -b "$code" \
+    "$ffile" \
+    "$file" \
+    &>> "${out_dir}"/logs/cons_log.txt ;
     
     then
-    let trac_count++ 
+    (( trac_count++ )) 
     
     else 
     echo "assembly failure for ${code}!"
@@ -95,7 +99,7 @@ for file in ${trace_dir}/*${r_tag}* ; do
     
 done
 
-if [ ${trac_count} -eq 0 ] ; then
+if [ "${trac_count}" -eq 0 ] ; then
 echo "ERROR: assembled 0 samples! Check log files for details"
 exit 1
 fi
@@ -134,17 +138,17 @@ ITSx -i ${out_dir}/assembly/con_list.fasta -o ${out_dir}/its/its \
 
 nd_ar=()
 nd_count=0
-while read p; do
+while read -r p; do
 
-  pt=(${out_dir}/assembly/${p}*_cons.txt)
+  pt=("${out_dir}"/assembly/"${p}"*_cons.txt)
   
-  c=`cat $pt`
+  c=$(cat "$pt")
   c=${c%%[[:space:]]Align*}
   c=${c//(*)/}
   
-  nd_ar+=($c)
+  nd_ar+=("$c")
   
-  let nd_count++
+  (( nd_count++ ))
   
 done < ${out_dir}/its/its_no_detections.txt
 
