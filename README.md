@@ -17,7 +17,7 @@ Clone (or download) the repository, and in the top level of the created director
 ## Usage
    
 
-**Trace to ITS**:  `pipe_one.trace_its.sh`
+**Trace to ITS**:   `pipe_one.trace_its.sh`
 
 The first section of the pipeline consists of basecalling the input trace files using **Tracy**, extracting consensus sequences where possible, chimera detection and finally extraction of ITS regions using **ITSx**. Consensus sequences are preferred but where necessary **ITSx** will extract from single direction strands.
 
@@ -36,9 +36,9 @@ The script expects pairs of forward and reverse traces as .ab1 or .scf, all in o
 
 Play with the script if you need to change parameters, but you shouldn't need to (unless you're trying to ID something other than fungi)
 
-**ITS to OTUs/Identifcations**:
+**ITS to OTUs/Identifcations**:   `pipe_two.cluster_classify.sh`
 
-pipe_two.cluster_classify.sh contains a workflow of commands for first classifying sequences against a reference database using **sintax** via **vsearch**, and then, if desired, clustering unmatched sequences into denovo OTUs. This process is both tricky and contentious, so for now the functionality is not wrapped up into a single command and is instead left open for the end user to implement how they see fit. More development to come.
+`pipe_two.cluster_classify.sh` contains a workflow of commands for first classifying sequences against a reference database using **sintax** via **vsearch**, and then, if desired, clustering unmatched sequences into denovo OTUs. This process is both tricky and contentious, so for now the functionality is not wrapped up into a single command and is instead left open for the end user to implement how they see fit. More development to come.
 
 ## Issues, Comments and Suggestions
 
