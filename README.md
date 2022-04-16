@@ -12,12 +12,12 @@ Since this project is very much in development I also recommend cloning the repo
 
 Clone (or download) the repository, and in the top level of the created directory run `./scripts/CREATE_ENV.sh` to set up the Conda environment. You'll probably need to chmod +x the scripts first - `chmod +x ./scripts/CREATE_ENV.sh`
 
-CREATE_ENV.sh will have Conda install all the necessary dependencies for you in a self contained environment. This does mean that you have to run all the scripts from within the ecto_pipe directory, but for now it seems the easiest way to ensure everyone is able to run things without having to worry about dependencies.  
+`CREATE_ENV.sh` will have Conda install all the necessary dependencies for you in a self contained environment. This does mean that you have to run all the scripts from within the ecto_pipe directory, but for now it seems the easiest way to ensure everyone is able to run things without having to worry about dependencies.  
 
 ## Usage
    
 
-**Trace to ITS**:  
+**Trace to ITS**:  `pipe_one.trace_its.sh`
 
 The first section of the pipeline consists of basecalling the input trace files using **Tracy**, extracting consensus sequences where possible, chimera detection and finally extraction of ITS regions using **ITSx**. Consensus sequences are preferred but where necessary **ITSx** will extract from single direction strands.
 
