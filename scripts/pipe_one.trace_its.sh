@@ -87,21 +87,22 @@ for file in "${trace_dir}"/*"${r_tag}"* ; do
     -b "$code" \
     "$ffile" \
     "$file" \
-    &>> "${out_dir}"/logs/cons_log.txt ;
-    
+    &>> ${out_dir}/logs/basecall_log.txt
     then
-    (( trac_count++ )) 
-    
+
+    trac_count=$((trac_count + 1))
+
     else 
     echo "assembly failure for ${code}!"
     
     fi
-    
+
 done
 
+
 if [ "${trac_count}" -eq 0 ] ; then
-echo "ERROR: assembled 0 samples! Check log files for details"
-exit 1
+    echo "ERROR: assembled 0 samples! Check log files for details"
+    exit 1
 fi
 
 echo "assembled ${trac_count} samples"
@@ -123,8 +124,7 @@ ITSx -i ${out_dir}/assembly/con_list.fasta -o ${out_dir}/its/its \
 --graphical F \
 --save_regions 'ITS1,5.8S,ITS2' \
 --cpu 4 \
-&>> ${out_dir}/logs/its_cons_log.txt
-
+&>> ${out_dir}/logs/its_log.txt
 
 # extract forward and reverse strands from sequences where no ITS could be recognised in the consensus seq
 # init empty array
@@ -148,7 +148,7 @@ while read -r p; do
   
   nd_ar+=("$c")
   
-  (( nd_count++ ))
+  nd_count=$((nd_count + 1))
   
 done < ${out_dir}/its/its_no_detections.txt
 
@@ -165,7 +165,7 @@ ITSx -i ${out_dir}/its/noconits.fa -o ${out_dir}/its/sing \
 --graphical F \
 --save_regions 'ITS1,5.8S,ITS2' \
 --cpu 4 \
-&>> ${out_dir}/logs/its_sing_log.txt
+&>> ${out_dir}/logs/its_log.txt
 
 echo "sorting results..."
 
