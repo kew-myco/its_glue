@@ -21,16 +21,34 @@
 ####                                                                   ####
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 
+set -e
+
+while getopts c:f:o:x flag
+do
+    case "${flag}" in
+        c) closed_ref="y";;
+        f) fasta=${OPTARG};;
+        o) out_dir=${OPTARG};;
+        x) overwrite="y";;
+
+        *) echo "ERROR: invalid flag! Have you read the README?" 
+           exit 1
+           ;;
+    esac
+done
+
+#(TODO: make these flags do more things)
+
 # CLOSED REFERENCE OTU ASSIGN
-# vsearch sintax, bootstrap support 0.8 per Edgar (https://www.drive5.com/usearch/manual/cmd_sintax.html)
+# vsearch sintax, bootstrap support 0.6 per Edgar (https://www.drive5.com/usearch/manual/cmd_sintax.html)
 
-vsearch --sintax './results/OTU_centroids.fa' \
+vsearch --sintax "${fasta}" \
 --db ./ext_dbs/utax_unite8.3.gz \
---sintax_cutoff 0.8 \
---tabbedout './results/sintax_class.tsv'
+--sintax_cutoff 0.6 \
+--tabbedout "${out_dir}"/sintax_classifications.tsv'
 
-# Sort unmatched reads, possibly into taxonomic groups?
-python3 ./scripts/modules/xtract_notmatched_sintax.py '[SOURCE]' '[DESTINATION]'
+# Sort unmatched reads (TODO: possibly into taxonomic groups?)
+python3 ./scripts/modules/xtract_notmatched_sintax.py "${out_dir}"/sintax_classifications.tsv "${fasta}" "${out_dir}"/nomatch.fa
 
 # OPEN REFERENCE OTU ASSIGN
 # vsearch cluster to OTUs
@@ -38,12 +56,13 @@ python3 ./scripts/modules/xtract_notmatched_sintax.py '[SOURCE]' '[DESTINATION]'
 # --sizeorder: abundance trumps distance for ties
 # --maxaccepts: number of decent hits to look for before making a decision (default 1!)
 
-vsearch --cluster_size 'PLACEHOLDER' \
---centroids './results/OTU_centroids.fa' \
---otutabout './results/OTU_cluster_memb.tsv' \
---uc './results/OTU_cluster_data.uc' \
+vsearch --cluster_size "${out_dir}"/nomatch.fa \
+--centroids "${out_dir}"/OTU_centroids.fa \
+--otutabout "${out_dir}"/OTU_cluster_membership.tsv \
+--uc "${out_dir}"/OTU_cluster_data.uc' \
 --id 0.97 \
 --sizeorder --clusterout_sort --maxaccepts 5
 
-# Do something with those clusters...
+#(TODO: tentatively identify those cluster)
+#(TODO: merge output)
 
