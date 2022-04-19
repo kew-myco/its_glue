@@ -14,7 +14,7 @@ Since this project is very much in development I also recommend cloning the repo
 
 ## Setup
 
-Clone (or download) the repository, and in the top level of the created directory run `./scripts/CREATE_ENV.sh` to set up the Conda environment. You'll probably need to chmod +x the scripts first - `chmod +x ./scripts/CREATE_ENV.sh`
+Clone (or download) the repository, and in the top level of the created directory run `./scripts/CREATE_ENV.sh` to set up the Conda environment. You'll probably need to chmod +x the scripts first - e.g. `chmod +x ./scripts/CREATE_ENV.sh`
 
 `CREATE_ENV.sh` will have Conda install all the necessary dependencies for you in a self contained environment. This does mean that you have to run all the scripts from within the ecto_pipe directory, but for now it seems the easiest way to ensure everyone is able to run things without having to worry about dependencies.  
 
