@@ -23,10 +23,11 @@
 
 set -e
 
-while getopts c:f:o:x flag
+while getopts c:d:f:o:x flag
 do
     case "${flag}" in
         c) closed_ref="y";;
+        d) db=${OPTARG};;
         f) fasta=${OPTARG};;
         o) out_dir=${OPTARG};;
         x) overwrite="y";;
@@ -43,9 +44,9 @@ done
 # vsearch sintax, bootstrap support 0.6 per Edgar (https://www.drive5.com/usearch/manual/cmd_sintax.html)
 
 vsearch --sintax "${fasta}" \
---db ./ext_dbs/utax_unite8.3.gz \
+--db "${db}" \
 --sintax_cutoff 0.6 \
---tabbedout "${out_dir}"/sintax_classifications.tsv'
+--tabbedout "${out_dir}"/sintax_classifications.tsv
 
 # Sort unmatched reads (TODO: possibly into taxonomic groups?)
 python3 ./scripts/modules/xtract_notmatched_sintax.py "${out_dir}"/sintax_classifications.tsv "${fasta}" "${out_dir}"/nomatch.fa
@@ -59,10 +60,15 @@ python3 ./scripts/modules/xtract_notmatched_sintax.py "${out_dir}"/sintax_classi
 vsearch --cluster_size "${out_dir}"/nomatch.fa \
 --centroids "${out_dir}"/OTU_centroids.fa \
 --otutabout "${out_dir}"/OTU_cluster_membership.tsv \
---uc "${out_dir}"/OTU_cluster_data.uc' \
+--uc "${out_dir}"/OTU_cluster_data.uc \
 --id 0.97 \
 --sizeorder --clusterout_sort --maxaccepts 5
 
-#(TODO: tentatively identify those cluster)
+# Tentatively identify those clusters
+vsearch --sintax "${out_dir}"/OTU_centroids.fa \
+--db "${db}" \
+--sintax_cutoff 0.6 \
+--tabbedout "${out_dir}"/sintax_denovo_classifications.tsv
+
 #(TODO: merge output)
 
