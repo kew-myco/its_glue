@@ -40,11 +40,11 @@ The script expects pairs of forward and reverse traces as .ab1 or .scf, all in o
 
 Play with the script if you need to change parameters, but you shouldn't need to (unless you're trying to ID something other than fungi)
 
-**ITS to OTUs/Identifcations**:   `pipe_two.cluster_classify.sh`  
+**ITS to OTUs/Identifcations**:   `pipe_two.classify_cluster.sh`  
 
 **[PRESENTLY CHANGING]**
 
-`pipe_two.cluster_classify.sh` contains a workflow of commands for first classifying sequences against a reference database using **sintax** via **vsearch**, and then, if desired, clustering unmatched sequences into denovo OTUs. This process is both tricky and contentious, so for now the functionality is not wrapped up into a single command and is instead left open for the end user to implement how they see fit. More development to come.
+`pipe_two.classify_cluster.sh` contains a workflow of commands for first classifying sequences against a reference database using **sintax** via **vsearch**, and then, if desired, clustering unmatched sequences into denovo OTUs. This process is both tricky and contentious, so for now the functionality is not wrapped up into a single command and is instead left open for the end user to implement how they see fit. More development to come.
 
 ## Issues, Comments and Suggestions
 
