@@ -23,7 +23,7 @@ Clone (or download) the repository, and in the top level of the created director
 
 **Trace to ITS**:   `pipe_one.trace_its.sh`
 
-The first section of the pipeline consists of basecalling the input trace files using **Tracy**, extracting consensus sequences where possible, chimera detection and finally extraction of ITS regions using **ITSx**. Consensus sequences are preferred but where necessary **ITSx** will extract from single direction strands.
+The first section of the pipeline handles basecalling the input trace files using **Tracy**, extracting consensus sequences where possible, chimera detection and finally extraction of ITS regions using **ITSx**. Consensus sequences are preferred but where necessary **ITSx** will extract from single direction strands.
 
 This functionality is all wrapped into a single script:
 
@@ -32,19 +32,33 @@ This functionality is all wrapped into a single script:
 -f [fw_tag] \
 -r [rev_tag] \
 -o [path/to/output] \
--x
 ```
-The script expects pairs of forward and reverse traces as .ab1 or .scf, all in one folder (i.e. not in subfolders). It will attempt the process on every trace file it finds in the input directory.
+The script expects pairs of forward and reverse traces as .ab1 or .scf, all in one folder (i.e. not in subfolders). It will attempt the process on every trace file it finds in the input directory. The path to this directory is specified by the `-t` flag.
 
--f and -r specify the tags used to identify forward and reverse reads in the filenames. They should be last before the extension and the filenames for fw and reverse reads should otherwise be identical. The -x flag indicates that you want to overwrite any previous runs of the pipeline to the specified output path.
+`-f` and `-r` specify the tags used to identify forward and reverse reads in the filenames. They should be last before the extension and the filenames for fw and reverse reads should otherwise be identical.
+
+Specify an output directory with the optional `-o` flag - if not specified it will default to the current location, which you probably don't want
+
+If you want to overwrite previous output (i.e. you are sending output to the same path as a previous run), use the optional `-x` flag.
 
 Play with the script if you need to change parameters, but you shouldn't need to (unless you're trying to ID something other than fungi)
 
 **ITS to OTUs/Identifcations**:   `pipe_two.classify_cluster.sh`  
 
-**[PRESENTLY CHANGING]**
+**[UNDER DEVELOPMENT]**
 
-`pipe_two.classify_cluster.sh` contains a workflow of commands for first classifying sequences against a reference database using **sintax** via **vsearch**, and then, if desired, clustering unmatched sequences into denovo OTUs. This process is both tricky and contentious, so for now the functionality is not wrapped up into a single command and is instead left open for the end user to implement how they see fit. More development to come.
+The second section of the pipeline handles OTU picking. It first classifies sequences against a specified reference database, using **sintax** via **vsearch**. Then, if desired, unmatched sequences (to a specified taxonomic level) can be clustered into denovo OTUs and cluster centroids tentatively identifed, again with **sintax**. This process is both tricky and contentious - more development to come.
+
+Again, the functionality is wrapped into a single script:
+
+```
+./scripts/pipe_two.classify_cluster.sh -d [path/to/reference/database] \
+-f [path/to/input/fasta] \
+-o [path/to/output] \
+```
+The script expects, as arguments, a reference database, specified by the `-d` flag, an input fasta, specified by the `-f` flag, and an output directory, specified by the `-o` flag. 
+
+If you don't want to use the denovo OTU section of the pipeline, use the optional -c flag **[not yet implemented!]**
 
 ## Issues, Comments and Suggestions
 
