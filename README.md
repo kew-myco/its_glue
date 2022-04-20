@@ -7,8 +7,9 @@
 
 ## Requirements
 
--  **A Unix environment** (e.g. Windows Subsytem for Linux if you're on Windows)  
--  **Conda** - I recommend miniconda
+-  **A Unix environment** (via Windows Subsytem for Linux if you're on Windows) - I recommend Ubuntu
+-  **Bash** - The main language the pipeline is written in. Almost all Unix enivironments come with bash so you probably don't need to worry about this.
+-  **Conda** - A package manganement/development environment system. It allows setting up and installing other dependencies isolated from the rest of your computer, and with minimal hassle. I recommend miniconda.
  
 Since this project is very much in development I also recommend cloning the repository with **git** and regularly using `git pull` so you can keep up with updates.
 
