@@ -58,7 +58,7 @@ Again, the functionality is wrapped into a single script:
 ```
 The script expects, as arguments, a reference database, specified by the `-d` flag, an input fasta, specified by the `-f` flag, and an output directory, specified by the `-o` flag. 
 
-If you don't want to use the denovo OTU section of the pipeline, use the optional -c flag **[not yet implemented!]**
+This section is still being developed, so expect change.
 
 ## Issues, Comments and Suggestions
 
