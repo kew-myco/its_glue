@@ -38,7 +38,26 @@ do
     esac
 done
 
-#(TODO: make these flags do more things)
+#(TODO: make flags c and x do more things)
+if [[ "$db" == "" || "$fasta" == "" ]] ; then
+    echo "ERROR: flags -d and -f require arguments." >&2
+    exit 1
+fi
+
+if [[ "$out_dir" == "" ]] ; then
+    out_dir='.'
+fi
+
+
+#activate conda
+CONDA_BASE=$(conda info --base)
+source "$CONDA_BASE/etc/profile.d/conda.sh"
+if conda activate ./seq_conda ; then
+    echo "activated conda env"
+else 
+    echo 'conda environment not set up! Have you run CREATE_ENV.sh?'
+    exit 1
+fi
 
 # CLOSED REFERENCE OTU ASSIGN
 # vsearch sintax, bootstrap support 0.6 per Edgar (https://www.drive5.com/usearch/manual/cmd_sintax.html)
