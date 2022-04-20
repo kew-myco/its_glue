@@ -1,7 +1,7 @@
 # its_glue
 ###### Pipeline to take trace files of fungal ITS sequences to identified & denovo OTUs
 
-## Raison D'etre
+## Summary
 
 `its_glue` is a pipeline to batch process pairs of forward and reverse chromatagrams produced via Sanger sequencing. It wraps powerful tools for working into a simple workflow, and outputs collated, organised results. The pipeline covers basecalling, assembly of forward and reverse reads, ITS extraction, quality control, and OTU picking.
 
