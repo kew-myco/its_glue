@@ -1,23 +1,16 @@
 #!/usr/bin/env bash
-
-#   .__  __           __________.__              .__  .__                 #
-#   |__|/  |_  ______ \______   \__|_____   ____ |  | |__| ____   ____    #
-#   |  \   __\/  ___/  |     ___/  \____ \_/ __ \|  | |  |/    \_/ __ \   #
-#   |  ||  |  \___ \   |    |   |  |  |_> >  ___/|  |_|  |   |  \  ___/   #
-#   |__||__| /____  >  |____|   |__|   __/ \___  >____/__|___|  /\___  >  #
-#                 \/               |__|        \/             \/     \/   #
 #                                                                         #
-##                                                                       ##
+#               .__  __                   .__                             #
+#               |__|/  |_  ______    ____ |  |  __ __   ____              #
+#               |  \   __\/  ___/   / ___\|  | |  |  \_/ __ \             #
+#               |  ||  |  \___ \   / /_/  >  |_|  |  /\  ___/             #
+#               |__||__| /____  >  \___  /|____/____/  \___  >            #
+##                            \/  /_____/                  \/            ##
 ###                                                                     ###  
 ####         Author : Alex Byrne                                       ####    
 ####         Contact : ablex7@gmail.com                                ####
 ####                                                                   ####
-####         Run from top level of seq_pipeline project folder         ####
-####         By default, expects .ab1 files in the format:             ####
-####         samplecode_DIRECTION_*.ab1 - e.g '_R_' = reverse          ####
-####         reads. The * just means anything can come after.          ####
-####         The sample filenames MUST match before the direction      ####
-####         is given.                                                 ####
+####         See its_glue github for usage details.                    ####
 ####                                                                   ####
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 
