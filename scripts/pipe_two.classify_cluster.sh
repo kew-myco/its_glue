@@ -76,7 +76,7 @@ vsearch --cluster_size "${out_dir}"/nomatch.fa \
 --otutabout "${out_dir}"/OTU_cluster_membership.tsv \
 --uc "${out_dir}"/OTU_cluster_data.uc \
 --id 0.97 \
---sizeorder --clusterout_sort --maxaccepts 5
+--sizeorder --clusterout_sort --sizeout --maxaccepts 5
 
 # Tentatively identify those clusters
 vsearch --sintax "${out_dir}"/OTU_centroids.fa \
@@ -85,4 +85,3 @@ vsearch --sintax "${out_dir}"/OTU_centroids.fa \
 --tabbedout "${out_dir}"/sintax_denovo_classifications.tsv
 
 #(TODO: merge output)
-
