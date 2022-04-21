@@ -32,7 +32,7 @@ This functionality is all wrapped into a single script:
 ./scripts/pipe_one.trace_its.sh -t [path/to/traces/directory] \
 -f [fw_tag] \
 -r [rev_tag] \
--o [path/to/output] \
+-o [path/to/output]
 ```
 The script expects pairs of forward and reverse traces as .ab1 or .scf, all in one folder (i.e. not in subfolders). It will attempt the process on every trace file it finds in the input directory. The path to this directory is specified by the `-t` flag.
 
