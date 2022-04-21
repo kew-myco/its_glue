@@ -48,9 +48,7 @@ Play with the script if you need to change parameters, but you shouldn't need to
 
 **ITS to OTUs/Identifcations**:   `pipe_two.classify_cluster.sh`  
 
-**[UNDER DEVELOPMENT]**
-
-The second section of the pipeline handles OTU picking. It first classifies sequences against a specified reference database, using **sintax** via **vsearch**. Then, if desired, unmatched sequences (to a specified taxonomic level) can be clustered into denovo OTUs and cluster centroids tentatively identifed, again with **sintax**. This process is both tricky and contentious - more development to come.
+The second section of the pipeline handles OTU picking. It first classifies sequences against a specified reference database, using **sintax** via **vsearch**. Then, if desired, unmatched sequences (to a specified taxonomic level) can be clustered into denovo OTUs and cluster centroids tentatively identifed, again with **sintax**.
 
 Again, the functionality is wrapped into a single script:
 
@@ -60,8 +58,6 @@ Again, the functionality is wrapped into a single script:
 -o [path/to/output] \
 ```
 The script expects, as arguments, a reference database, specified by the `-d` flag, an input fasta, specified by the `-f` flag, and an output directory, specified by the `-o` flag. 
-
-This section is still being developed, so expect change.
 
 ## Issues, Comments and Suggestions
 
