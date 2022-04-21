@@ -48,7 +48,7 @@ Play with the script if you need to change parameters, but you shouldn't need to
 
 **ITS to OTUs/Identifcations**:   `pipe_two.classify_cluster.sh`  
 
-**I am increasingly suspicuous of the sintax algorithm, so treat this part of the pipeline as experimental..."
+**I am increasingly suspicuous of the sintax algorithm, so treat this part of the pipeline as experimental...**
 
 The second section of the pipeline handles OTU picking. It first classifies sequences against a specified reference database, using **sintax** via **vsearch**. Then, if desired, unmatched sequences (to a specified taxonomic level) can be clustered into denovo OTUs and cluster centroids tentatively identifed, again with **sintax**.
 
