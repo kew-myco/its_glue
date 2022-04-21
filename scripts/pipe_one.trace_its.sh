@@ -76,7 +76,7 @@ for file in "${trace_dir}"/*"${r_tag}"* ; do
     if
     ./tracy/tracy consensus \
     -o "${out_dir}"/assembly/"$code""$tag" \
-    -q 0 -u 0 -r 0 -s 0 -i \
+    -q 0 -u 0 -r 0 -s 0 \
     -b "$code" \
     "$ffile" \
     "$file" \
