@@ -11,13 +11,15 @@
 -  **Bash** - The main language the pipeline is written in. Almost all Unix enivironments come with bash so you probably don't need to worry about this, unless you already know that you do.
 -  **Conda** - A package manganement/development environment system. It allows setting up and installing other dependencies isolated from the rest of your computer, and with minimal hassle. I recommend miniconda.
  
+Check the project wiki for an [Install Guide On Windows](https://github.com/kew-myco/its_glue/wiki/Install-Guide-on-Windows), including installation of these requirements.  
+
 Since this project is very much in development I also recommend cloning the repository with **git** and regularly using `git pull` so you can keep up with updates.
 
 ## Setup
 
-Clone (or download) the repository, and in the top level of the created directory run `./scripts/CREATE_ENV.sh` to set up the Conda environment. You'll probably need to chmod +x the scripts first - e.g. `chmod +x ./scripts/CREATE_ENV.sh`
+Assuming you have all the reqiurements set up, clone (or download) the repository into your Unix enivronment. In the top level of the created directory run `./scripts/CREATE_ENV.sh` to set up the Conda environment. You'll probably need to chmod +x the scripts first - e.g. `chmod +x ./scripts/CREATE_ENV.sh`
 
-`CREATE_ENV.sh` will have Conda install all the necessary dependencies for you in a self contained environment. This does mean that you have to run all the scripts from within the pipeline directory, but for now it seems the easiest way to ensure everyone is able to run things without having to worry about dependencies.  
+`CREATE_ENV.sh` will have Conda install all the necessary dependencies for you in a self contained Conda environment. It seems the easiest way to ensure everyone is able to run things without having to worry about installing the specific tools the pipeline relies on. This does mean that you have to run all the scripts from within the top-level pipeline directory.
 
 ## Usage
    
