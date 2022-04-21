@@ -117,6 +117,7 @@ ITSx -i ${out_dir}/assembly/con_list.fasta -o ${out_dir}/its/its \
 --graphical F \
 --save_regions 'ITS1,5.8S,ITS2' \
 --cpu 4 \
+--minlen 30 \
 &>> ${out_dir}/logs/its_log.txt
 
 # extract forward and reverse strands from sequences where no ITS could be recognised in the consensus seq
@@ -158,6 +159,7 @@ ITSx -i ${out_dir}/its/noconits.fa -o ${out_dir}/its/sing \
 --graphical F \
 --save_regions 'ITS1,5.8S,ITS2' \
 --cpu 4 \
+--minlen 30 \
 &>> ${out_dir}/logs/its_log.txt
 
 echo "sorting results..."
