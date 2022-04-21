@@ -43,7 +43,7 @@ fi
 if [[ "${overwrite}" == "y" ]] ; then
     mkdir -p ${out_dir}/assembly ${out_dir}/its ${out_dir}/logs
 else
-    mkdir ${out_dir}/assembly ${out_dir}/its ${out_dir}/logs || echo "ERROR: output directory exists! Did you want to overwrite with -x?" ; exit 1
+    mkdir ${out_dir}/assembly ${out_dir}/its ${out_dir}/logs || { echo "ERROR: output directory exists! Did you want to overwrite with -x?"; exit 1; }
 fi
 
 echo "" # blank line to space output
