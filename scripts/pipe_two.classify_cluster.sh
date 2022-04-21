@@ -61,7 +61,9 @@ vsearch --sintax "${fasta}" \
 --tabbedout "${out_dir}"/sintax_classifications.tsv
 
 # Sort unmatched reads (TODO: possibly into taxonomic groups?)
-python3 ./scripts/modules/xtract_notmatched_sintax.py "${out_dir}"/sintax_classifications.tsv "${fasta}" "${out_dir}"/nomatch.fa
+python3 ./scripts/modules/xtract_notmatched_sintax.py "${out_dir}"/sintax_classifications.tsv "${fasta}" "${out_dir}"
+
+rm "${out_dir}"/sintax_classifications.tsv
 
 # OPEN REFERENCE OTU ASSIGN
 # vsearch cluster to OTUs
