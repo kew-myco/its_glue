@@ -46,18 +46,18 @@ If you want to overwrite previous output (i.e. you are sending output to the sam
 
 Play with the script if you need to change parameters, but you shouldn't need to (unless you're trying to ID something other than fungi)
 
-**ITS to OTUs/Identifcations**:   `pipe_two.classify_cluster.sh`  
+**ITS to OTUs/Identifications**:   `pipe_two.classify_cluster.sh`  
 
-**I am increasingly suspicuous of the sintax algorithm, so treat this part of the pipeline as experimental...**
+**I am dubious of all available methods of taxonomic assignment, so treat this part of the pipeline as experimental...**
 
 The second section of the pipeline handles OTU picking. It first classifies sequences against a specified reference database, using **sintax** via **vsearch**. Then, if desired, unmatched sequences (to a specified taxonomic level) can be clustered into denovo OTUs and cluster centroids tentatively identifed, again with **sintax**.
 
 Again, the functionality is wrapped into a single script:
 
 ```
-./scripts/pipe_two.classify_cluster.sh -d [path/to/reference/database] \
+./scripts/pipe_two.cluster_classify.sh -d [path/to/reference/database] \
 -f [path/to/input/fasta] \
--o [path/to/output] \
+-o [path/to/output]
 ```
 The script expects, as arguments, a reference database, specified by the `-d` flag, an input fasta, specified by the `-f` flag, and an output directory, specified by the `-o` flag. 
 
