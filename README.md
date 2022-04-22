@@ -24,7 +24,7 @@ Assuming you have all the reqiurements set up, clone (or download) the repositor
 ## Usage
    
 
-**Trace to ITS**:   `pipe_one.trace_its.sh`
+**Trace to ITS**:
 
 The first section of the pipeline handles basecalling the input trace files using **Tracy**, extracting consensus sequences where possible, chimera detection and finally extraction of ITS regions using **ITSx**. Consensus sequences are preferred but where necessary **ITSx** will extract from single direction strands.
 
@@ -46,7 +46,7 @@ If you want to overwrite previous output (i.e. you are sending output to the sam
 
 Play with the script if you need to change parameters, but you shouldn't need to (unless you're trying to ID something other than fungi)
 
-**ITS to OTUs/Identifications**:   `pipe_two.classify_cluster.sh`  
+**ITS to OTUs/Identifications**:  
 
 **I am dubious of all available methods of taxonomic assignment, so treat this part of the pipeline as experimental...**
 
