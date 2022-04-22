@@ -12,13 +12,15 @@
 -  **Conda** - A package manganement/development environment system. It allows setting up and installing other dependencies isolated from the rest of your computer, and with minimal hassle. I recommend miniconda.
 -  **Git** (Optional) - if you want to keep up with updates and bugfixes (depending how actively I am developing), you can use git to create a copy of the pipeline on your local machine which is linked to this repository.
  
-Check the project wiki for an [Install Guide On Windows](https://github.com/kew-myco/its_glue/wiki/Install-Guide-on-Windows), including installation of these requirements.  
-
-Since this project is very much in development (as of April 2022) I also recommend cloning the repository with **git** and regularly using `git pull` in the top-so you can keep up with updates.
+Check the [project wiki](https://github.com/kew-myco/its_glue/wiki) for install guides for Mac and Windows, including installation of these requirements.
 
 ## Setup
 
-Assuming you have all the reqiurements set up, clone the repository into your Unix enivronment using git - `git clone https://github.com/kew-myco/its_glue.git`. You can also download the repository if you don't want to use git. In the top level of the created directory run `./scripts/CREATE_ENV.sh` to set up the Conda environment. You'll probably need to chmod +x the scripts first - e.g. `chmod +x ./scripts/CREATE_ENV.sh`
+Since this project is very much in development (as of April 2022), I recommend cloning the repository with **git** and regularly using `git pull` in the top-so you can keep up with updates.
+
+Once you have all the reqiurements set up, clone the repository into your Unix enivronment using git - `git clone https://github.com/kew-myco/its_glue.git`. You can also download the repository if you don't want to use git. 
+
+In the top level of the created directory run `./scripts/CREATE_ENV.sh` to set up the Conda environment. You'll probably need to chmod +x the scripts first - e.g. `chmod +x ./scripts/CREATE_ENV.sh`, or you'll get `permission denied` errors.
 
 `CREATE_ENV.sh` will have Conda install all the necessary dependencies for you in a self contained Conda environment. It seems the easiest way to ensure everyone is able to run things without having to worry about installing the specific tools the pipeline relies on. This does mean that you have to run all the scripts from within the top-level pipeline directory.
 
