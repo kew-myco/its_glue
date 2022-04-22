@@ -80,12 +80,12 @@ for file in "${trace_dir}"/*"${r_tag}"* ; do
     -b "$code" \
     "$ffile" \
     "$file" \
-    &>> ${out_dir}/logs/basecall_log.txt
+    &>> "${out_dir}"/logs/basecall_log.txt
     then
 
     trac_count=$((trac_count + 1))
 
-    else 
+    else
     echo "assembly failure for ${code}!"
     
     fi
@@ -108,17 +108,17 @@ echo "assembled ${trac_count} samples"
 
 ### Collate seqs
 
-cat ${out_dir}/assembly/*cons.fa > ${out_dir}/assembly/con_list.fasta
+cat "${out_dir}"/assembly/*cons.fa > "${out_dir}"/assembly/con_list.fasta
 
 ###  xtract ITS with ITSx
 echo "running ITSx..."
-ITSx -i ${out_dir}/assembly/con_list.fasta -o ${out_dir}/its/its \
+ITSx -i "${out_dir}"/assembly/con_list.fasta -o "${out_dir}"/its/its \
 -t 'fungi' \
 --graphical F \
 --save_regions 'ITS1,5.8S,ITS2' \
 --cpu 4 \
 --minlen 30 \
-&>> ${out_dir}/logs/its_log.txt
+&>> "${out_dir}"/logs/its_log.txt
 
 # extract forward and reverse strands from sequences where no ITS could be recognised in the consensus seq
 # init empty array
@@ -144,7 +144,7 @@ while read -r p; do
   
   nd_count=$((nd_count + 1))
   
-done < ${out_dir}/its/its_no_detections.txt
+done < "${out_dir}"/its/its_no_detections.txt
 
 if [[ $nd_count -ne 0 ]] ; then
 echo "no ITS detected in consensus for $nd_count samples, trying single direction strands..."
@@ -154,20 +154,20 @@ printf "%s\n" "${nd_ar[@]}" > ${out_dir}/its/noconits.fa
 
 
 # try ITSx on those
-ITSx -i ${out_dir}/its/noconits.fa -o ${out_dir}/its/sing \
+ITSx -i "${out_dir}"/its/noconits.fa -o "${out_dir}"/its/sing \
 -t 'fungi' \
 --graphical F \
 --save_regions 'ITS1,5.8S,ITS2' \
 --cpu 4 \
 --minlen 30 \
-&>> ${out_dir}/logs/its_log.txt
+&>> "${out_dir}"/logs/its_log.txt
 
 echo "sorting results..."
 
 # cat results - drop those we can't find ITS for, this is our major quality filter
-cat ${out_dir}/its/*ITS1* > ${out_dir}/its/its1.merge.fa
-cat ${out_dir}/its/*5_8S* > ${out_dir}/its/5_8S.merge.fa
-cat ${out_dir}/its/*ITS2* > ${out_dir}/its/its2.merge.fa
+cat "${out_dir}"/its/*ITS1* > "${out_dir}"/its/its1.merge.fa
+cat "${out_dir}"/its/*5_8S* > "${out_dir}"/its/5_8S.merge.fa
+cat "${out_dir}"/its/*ITS2* > "${out_dir}"/its/its2.merge.fa
 
 
 #join ITS1 5.8S ITS2 per sample
