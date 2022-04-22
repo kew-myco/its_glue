@@ -45,6 +45,7 @@ Specify an output directory with the optional `-o` flag - if not specified it wi
 If you want to overwrite previous output (i.e. you are sending output to the same path as a previous run), use the optional `-x` flag.
 
 Play with the script if you need to change parameters, but you shouldn't need to (unless you're trying to ID something other than fungi)
+<br>
 
 **ITS to OTUs/Identifications**:  
 
