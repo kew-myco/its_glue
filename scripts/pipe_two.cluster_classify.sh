@@ -64,5 +64,4 @@ vsearch --sintax "${fasta}" \
 --sintax_cutoff 0.6 \
 --tabbedout "${out_dir}"/sintax_classifications.tsv
 
-
-#(TODO: merge output)
+python3 ./scripts/modules/cluster_classify_organise_output.py "${out_dir}"/sintax_classifications.tsv "${out_dir}"/cluster_membership.tsv "${out_dir}"

@@ -6,8 +6,6 @@ Created on Fri Apr 22 12:52:08 2022
 @author: blex
 """
 
-import re
-import csv
 import pandas as pd
 from argparse import ArgumentParser
 
@@ -20,10 +18,7 @@ args = parser.parse_args()
 
 with open(args.sintax_class) as sc, open(args.cluster_membership) as cm:
     clsif = pd.read_csv(sc, sep = '\t', header=None, names=list('abcde'))
-    cmem = pd.read_csv(cm, sep = '\t', header=None)
-    
-
-named_cmem = cmem
+    cmem = pd.read_csv(cm, sep = '\t', index_col=0)
 
 clsif = clsif.values.tolist()
 clsif = [[str(x) for x in row] for row in clsif]
@@ -40,12 +35,20 @@ for row_index in range(cmem.shape[0]):
         
     best_ids.append(ids_list[ids_len.index(max(ids_len))])
     
+rename_clust = []
+for ind, tax in enumerate(best_ids):
+    if tax != 'nan':
+        rename_clust.append(tax)
+    else:
+        rename_clust.append(cmem.index.values.tolist()[ind])
         
-    
-        
-        
-        
-        
+cmem.set_index(pd.Series(rename_clust), inplace = True)
+
+with open(args.od + '/assigned_clusters.tsv', 'w') as o:
+    cmem.to_csv(o)
+
+# merge duplicated SHs into single clusters!
+# filter dataframe of cluster membership by SH, and sum for duplicated SHs (i.e. more than one row)
         
     
     
@@ -54,8 +57,8 @@ for row_index in range(cmem.shape[0]):
 
 # testing data
 
-with open('/home/blex/Documents/Kew/fungi_research/genetics/seq_pipeline/bugfix/out_21.04.22/otu/sintax_classifications.tsv') as sc:
-    clsif = pd.read_csv(sc, sep = '\t', header=None, names=list('abcde'))
+# with open('/home/blex/Documents/Kew/fungi_research/genetics/seq_pipeline/bugfix/out_21.04.22/otu/sintax_classifications.tsv') as sc:
+#     clsif = pd.read_csv(sc, sep = '\t', header=None, names=list('abcde'))
     
-with open('/home/blex/Documents/Kew/fungi_research/genetics/seq_pipeline/bugfix/out_21.04.22/otu/cluster_membership.tsv') as cm:
-    cmem = pd.read_csv(cm, sep = '\t', index_col=0)
+# with open('/home/blex/Documents/Kew/fungi_research/genetics/seq_pipeline/bugfix/out_21.04.22/otu/cluster_membership.tsv') as cm:
+#     cmem = pd.read_csv(cm, sep = '\t', index_col=0)
