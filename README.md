@@ -26,10 +26,11 @@ In the top level of the created directory run `./scripts/CREATE_ENV.sh` to set u
 
 ## Usage
    
+All scripts must be run from inside the [top-level directory](https://github.com/kew-myco/its_glue/wiki/Glossary-of-Terms) of the pipeline.
 
 **Trace to ITS**:
 
-The first section of the pipeline handles basecalling the input trace files using **Tracy**, extracting consensus sequences where possible, chimera detection and finally extraction of ITS regions using **ITSx**. Consensus sequences are preferred but where necessary **ITSx** will extract from single direction strands.
+The first section of the pipeline handles basecalling the input trace files using [**Tracy**](https://github.com/gear-genomics/tracy), extracting consensus sequences where possible, chimera detection and finally extraction of ITS regions using [**ITSx**](https://microbiology.se/software/itsx/). Consensus sequences are preferred but where necessary **ITSx** will extract from single direction strands.
 
 This functionality is all wrapped into a single script:
 
@@ -49,14 +50,11 @@ If you want to overwrite previous output (i.e. you are sending output to the sam
 
 Play with the script if you need to change parameters, but you shouldn't need to (unless you're trying to ID something other than fungi)  
 
-**ITS to OTUs/Identifications**:  
+**ITS to OTUs/Identifications**:
 
-**I am dubious of all available methods of taxonomic assignment, so treat this part of the pipeline as experimental...**
-**Also, the info below about what the pipeline actually does to gather OTUs is presently lies - we have improved it but I'm yet to update this section**
+The second section of the pipeline handles OTU picking. It first clusters sequences into OTUs at 97% similarity, using the single linkage clustering algorithm provided by [**vsearch**](https://github.com/torognes/vsearch). It then uses [**sintax**](https://drive5.com/sintax/), again implemented in **vsearch**, to assign taxonomy (as best it can) to each OTU using a [reference database](https://github.com/kew-myco/its_glue/wiki/Glossary-of-Terms). I am personally dubious of *all* presently available methods of taxonomic assignment (e.g. see [here](https://peerj.com/articles/3889/) and [here](https://peerj.com/articles/4652/)), for a discussion of this implemenation see the wiki (**TODO**).
 
-The second section of the pipeline handles OTU picking. It first classifies sequences against a specified reference database, using **sintax** via **vsearch**. Then, if desired, unmatched sequences (to a specified taxonomic level) can be clustered into denovo OTUs and cluster centroids tentatively identifed, again with **sintax**.
-
-Again, the functionality is wrapped into a single script:
+The functionality is wrapped into a single script:
 
 ```
 ./scripts/pipe_two.cluster_classify.sh -d 'path/to/reference/database' \
@@ -67,11 +65,11 @@ The script expects, as arguments, a reference database, specified by the `-d` fl
 
 ## Issues, Comments and Suggestions
 
-If you have issues with the pipeline please post them to the **Issues** tab of this GitHub repository. Please note that this is only for issues installing the pipeline itself or running it, not installing the dependencies. I'd love to have time to help people install dependencies etc. but I unfortunately don't.
+If you have issues with the pipeline please post them to the **Issues** tab of this GitHub repository. Please note that this is only for issues installing the pipeline itself or running it, not installing the dependencies. I'd love to have time to help people install dependencies etc. but I unfortunately don't - and they have their own GitHub repositories where you may ask questions.
 
 If you have queries, comments, suggestions or questions about the pipeline please submit them to the **Discussions** tab. Hopefully this way we can build up something of a community FAQ.
 
 ## Citing / Crediting
 
-I haven't really figured this bit out yet, but if you use this pipeline, or data produced from this pipeline, please credit me in some way - I suppose either through authorship (if appropriate) or citing (for now) this page.
+I haven't really figured this bit out yet, but if you use this pipeline, or data produced from this pipeline, please credit me in some way - I suppose either through authorship (if appropriate) or citing (for now) this page. You should also be citing the appropriate publications for **Tracy**, **ITSx**, **vsearch** and **sintax**.
 
