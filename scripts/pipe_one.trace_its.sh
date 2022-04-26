@@ -43,7 +43,7 @@ fi
 if [[ "${overwrite}" == "y" ]] ; then
     mkdir -p ${out_dir}/assembly ${out_dir}/its ${out_dir}/logs
 else
-    mkdir ${out_dir}/assembly ${out_dir}/its ${out_dir}/logs || { echo "ERROR: output directory exists! Did you want to overwrite with -x?"; exit 1; }
+    mkdir ${out_dir}/assembly ${out_dir}/its ${out_dir}/logs
 fi
 
 echo "" # blank line to space output
@@ -80,7 +80,7 @@ for file in "${trace_dir}"/*"${r_tag}"* ; do
     -b "$code" \
     "$ffile" \
     "$file" \
-    &>> "${out_dir}"/logs/basecall_log.txt
+    >> "${out_dir}"/logs/basecall_log.txt 2>&1
     then
 
     trac_count=$((trac_count + 1))
@@ -118,7 +118,7 @@ ITSx -i "${out_dir}"/assembly/con_list.fasta -o "${out_dir}"/its/its \
 --save_regions 'ITS1,5.8S,ITS2' \
 --cpu 4 \
 --minlen 30 \
-&>> "${out_dir}"/logs/its_log.txt
+>> "${out_dir}"/logs/its_log.txt 2>&1
 
 # extract forward and reverse strands from sequences where no ITS could be recognised in the consensus seq
 # init empty array
@@ -160,7 +160,7 @@ ITSx -i "${out_dir}"/its/noconits.fa -o "${out_dir}"/its/sing \
 --save_regions 'ITS1,5.8S,ITS2' \
 --cpu 4 \
 --minlen 30 \
-&>> "${out_dir}"/logs/its_log.txt
+>> "${out_dir}"/logs/its_log.txt 2>&1
 
 echo "sorting results..."
 

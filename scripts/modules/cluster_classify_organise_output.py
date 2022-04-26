@@ -50,8 +50,6 @@ with open(args.od + '/assigned_clusters.tsv', 'w') as o:
 # merge duplicated SHs into single clusters!
 # filter dataframe of cluster membership by SH, and sum for duplicated SHs (i.e. more than one row)
         
-    
-    
 
 
 
