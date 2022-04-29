@@ -70,20 +70,14 @@ fi
 echo "running Tracy..."
 trac_count=0
 for file in "$trace_dir"/*"$r_tag"* ; do
-    
-    echo "file: $file"
-    echo "trace: $trace_dir tag: $r_tag $f_tag"
 
     # take full path of file and delete all except filename
     xbase="${file##*/}"
-    echo "xbase $xbase"
     
     # get filename excluding primer/direction id
     code=${xbase%%"$r_tag"*}
-    echo "code $code"
     
     # check only a pair of files for given $code
-    echo $(ls "$trace_dir"/"$code"* )
     uchk=$(ls "$trace_dir"/"$code"* | wc -l)
     if [ "$uchk" -ne 2 ] ; then
         echo "ERROR: multiple matching filenames detected for $code" >&2
