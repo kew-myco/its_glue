@@ -78,7 +78,7 @@ for file in "$trace_dir"/*"$r_tag"* ; do
     code=${xbase%%"$r_tag"*}
     
     # check only a pair of files for given $code
-    uchk=$(find "$trace_dir"/"$code"* | wc -l)
+    uchk=$(ls "$trace_dir"/"$code"* | wc -l)
     if [ "$uchk" -ne 2 ] ; then
         echo "ERROR: multiple matching filenames detected for $code" >&2
         exit 1
