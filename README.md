@@ -61,7 +61,7 @@ The functionality is wrapped into a single script:
 -f 'path/to/input/fasta' \
 -o 'path/to/output'
 ```
-The script expects, as arguments, a reference database, specified by the `-d` flag, an input fasta, specified by the `-f` flag, and an output directory, specified by the `-o` flag. If you are using the first stage of the pipeline, the input fasta will be in the `its` directory of the output, and named `ALL_ITS.fa`
+The script expects, as arguments, a reference database, specified by the `-d` flag, an input fasta, specified by the `-f` flag, and an output directory, specified by the `-o` flag. If you are using the first stage of the pipeline, the input fasta will be in the `its` directory of the output, and named `ALL_ITS.fa`.
 
 ## Issues, Comments and Suggestions
 
