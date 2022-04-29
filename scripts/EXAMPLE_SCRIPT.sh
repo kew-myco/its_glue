@@ -1,4 +1,4 @@
-./scripts/pipe_one.trace_its.sh -t ./data/traces -f ITS1F -r ITS4 -o ./wrap_test
+./scripts/pipe_one.trace_its.sh -t ./data/traces -f '_ITS1F' -r '_ITS4' -o ../bash3_test -x
 
 ./scripts/pipe_one.trace_its.sh -t /home/blex/Documents/Kew/fungi_research/manuel/seqs.07_03_22/traces -f _fw -r _rev -o /home/blex/Documents/Kew/fungi_research/manuel/seqs.07_03_22/pipe_out -x
 
