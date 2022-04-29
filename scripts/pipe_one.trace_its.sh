@@ -73,11 +73,14 @@ for file in "$trace_dir"/*"$r_tag"* ; do
 
     # take full path of file and delete all except filename
     xbase="${file##*/}"
+    echo $xbase
     
     # get filename excluding primer/direction id
     code=${xbase%%"$r_tag"*}
+    echo $code
     
     # check only a pair of files for given $code
+    echo $(ls "$trace_dir"/"$code"* )
     uchk=$(ls "$trace_dir"/"$code"* | wc -l)
     if [ "$uchk" -ne 2 ] ; then
         echo "ERROR: multiple matching filenames detected for $code" >&2
