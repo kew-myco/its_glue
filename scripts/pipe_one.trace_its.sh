@@ -71,6 +71,7 @@ echo "running Tracy..."
 trac_count=0
 for file in "$trace_dir"/*"$r_tag"* ; do
     
+    echo "file: $file"
     echo "trace: $trace_dir tag: $r_tag $f_tag"
 
     # take full path of file and delete all except filename
