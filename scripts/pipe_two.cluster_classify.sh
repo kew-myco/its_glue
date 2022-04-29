@@ -75,6 +75,6 @@ vsearch --sintax "${fasta}" \
 --sintax_cutoff "${sco}" \
 --tabbedout "${out_dir}"/sintax_classifications.tsv
 
-python3 ./scripts/modules/cluster_classify_organise_output.py "${out_dir}"/sintax_classifications.tsv "${out_dir}"/cluster_membership.tsv "${out_dir}"/assigned_clusters.csv
+python3 ./scripts/modules/cluster_classify_organise_output.py "${out_dir}"/sintax_classifications.tsv "${out_dir}"/cluster_membership.tsv "${out_dir}"/clusters_with_taxonomy.csv
 
 
