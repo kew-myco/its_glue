@@ -70,14 +70,16 @@ fi
 echo "running Tracy..."
 trac_count=0
 for file in "$trace_dir"/*"$r_tag"* ; do
+    
+    echo "trace: $trace_dir tag: $r_tag $f_tag"
 
     # take full path of file and delete all except filename
     xbase="${file##*/}"
-    echo $xbase
+    echo "xbase $xbase"
     
     # get filename excluding primer/direction id
     code=${xbase%%"$r_tag"*}
-    echo $code
+    echo "code $code"
     
     # check only a pair of files for given $code
     echo $(ls "$trace_dir"/"$code"* )
