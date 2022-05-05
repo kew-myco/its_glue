@@ -16,7 +16,7 @@ Check the [project wiki](https://github.com/kew-myco/its_glue/wiki) for install 
 
 ## Setup
 
-Since this project is very much in development (as of April 2022), I recommend cloning the repository with **git** and regularly using `git pull` in the top-so you can keep up with updates.
+Since this project is very much in development (as of April 2022), I recommend cloning the repository with **git** and regularly using `git pull` so you can keep up with updates.
 
 Once you have all the reqiurements set up, clone the repository into your Unix enivronment using git - `git clone https://github.com/kew-myco/its_glue.git`. You can also download the repository if you don't want to use git. 
 
