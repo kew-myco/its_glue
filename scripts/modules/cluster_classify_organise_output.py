@@ -55,8 +55,8 @@ with open(args.op, 'w') as o:
 
 # testing data
 
-with open('/home/blex/Documents/Kew/fungi_research/genetics/seq_pipeline/bugfix/out_21.04.22/otu/sintax_classifications.tsv') as sc:
-    clsif = pd.read_csv(sc, sep = '\t', header=None, names=list('abcde'))
+# with open('/home/blex/Documents/Kew/fungi_research/genetics/seq_pipeline/bugfix/out_21.04.22/otu/sintax_classifications.tsv') as sc:
+#     clsif = pd.read_csv(sc, sep = '\t', header=None, names=list('abcde'))
     
-with open('/home/blex/Documents/Kew/fungi_research/genetics/seq_pipeline/bugfix/out_21.04.22/otu/cluster_membership.tsv') as cm:
-    cmem = pd.read_csv(cm, sep = '\t', index_col=0)
+# with open('/home/blex/Documents/Kew/fungi_research/genetics/seq_pipeline/bugfix/out_21.04.22/otu/cluster_membership.tsv') as cm:
+#    cmem = pd.read_csv(cm, sep = '\t', index_col=0)
