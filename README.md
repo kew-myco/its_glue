@@ -35,14 +35,14 @@ The first section of the pipeline handles basecalling the input trace files usin
 This functionality is all wrapped into a single script:
 
 ```
-./scripts/pipe_one.trace_its.sh -t 'path/to/traces/directory' \
+./scripts/pipe_one.trace_its.sh -t path/to/traces/directory \
 -f fw_tag \
 -r rev_tag \
--o 'path/to/output'
+-o path/to/output
 ```
 The script expects pairs of forward and reverse traces as .ab1 or .scf, all in one folder (i.e. not in subfolders). It will attempt the process on every trace file it finds in the input directory. The path to this directory is specified by the `-t` flag.
 
-`-f` and `-r` specify the tags used to identify forward and reverse reads in the filenames. They should be last before the extension and the filenames for fw and reverse reads should otherwise be identical.
+`-f` and `-r` specify the tags used to identify forward and reverse reads in the filenames. They should be last before the extension and the filenames for fw and reverse reads should otherwise be identical. They cannot be `-f` or `-r` - those are reserved for the flags!
 
 Specify an output directory with the optional `-o` flag - if not specified it will default to the current location, which you probably don't want
 
@@ -57,9 +57,9 @@ The second section of the pipeline handles OTU picking. It first clusters sequen
 The functionality is wrapped into a single script:
 
 ```
-./scripts/pipe_two.cluster_classify.sh -d 'path/to/reference/database' \
--f 'path/to/input/fasta' \
--o 'path/to/output'
+./scripts/pipe_two.cluster_classify.sh -d path/to/reference/database \
+-f path/to/input/fasta \
+-o path/to/output
 ```
 The script expects, as arguments, a reference database, specified by the `-d` flag, an input fasta, specified by the `-f` flag, and an output directory, specified by the `-o` flag. If you are using the first stage of the pipeline, the input fasta will be in the `its` directory of the output, and named `ALL_ITS.fa`.
 
