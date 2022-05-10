@@ -63,6 +63,10 @@ The functionality is wrapped into a single script:
 ```
 The script expects, as arguments, a reference database, specified by the `-d` flag, an input fasta, specified by the `-f` flag, and an output directory, specified by the `-o` flag. If you are using the first stage of the pipeline, the input fasta will be in the `its` directory of the output, and named `ALL_ITS.fa`.
 
+## Outputs
+
+Please see the [project wiki](https://github.com/kew-myco/its_glue/wiki) for a [guide to output](https://github.com/kew-myco/its_glue/wiki/Guide-to-Output) for each pipeline stage (**part-complete**)
+
 ## Issues, Comments and Suggestions
 
 If you have issues with the pipeline please post them to the **Issues** tab of this GitHub repository. Please note that this is only for issues installing the pipeline itself or running it, not installing the dependencies. I'd love to have time to help people install dependencies etc. but I unfortunately don't - and they have their own GitHub repositories where you may ask questions.
