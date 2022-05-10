@@ -13,7 +13,7 @@
 
 ## Setup
 
-Check the [project wiki](https://github.com/kew-myco/its_glue/wiki) for install guides for Linux, Windows Subsystem for Linux, and Mac, including installation of requirements.
+Check the [project wiki](https://github.com/kew-myco/its_glue/wiki) for install guides for Linux, Windows Subsystem for Linux, and Mac, including installation of requirements. I recommend running the pipeline on Linux.
 
 ## Usage
    
