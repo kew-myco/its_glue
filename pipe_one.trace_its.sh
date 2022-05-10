@@ -89,7 +89,7 @@ for file in "$trace_dir"/*"$r_tag"* ; do
     
     # assemble
     if
-    ./tracy/src/tracy consensus \
+    ./tracy/src/tracy consensus -i \
     -o "$out_dir"/assembly/"$code"_cons \
     -q 0 -u 0 -r 0 -s 0 \
     -b "$code" \

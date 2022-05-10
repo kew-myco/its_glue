@@ -25,9 +25,12 @@ brew install \
      gsl \
      libtool \
      pkg-config \
-     boost \
      htslib \
      autoconf@2.69
+     
+brew install boost # this might fail but as I recall the error message was informative
+
+brew link autoconf@2.69
 
 git clone --recursive https://github.com/gear-genomics/tracy.git
 cd tracy

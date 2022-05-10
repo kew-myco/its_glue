@@ -11,3 +11,4 @@ results/
 wrap_test/
 scripts/DEV_ONLY
 bugfix/
+release*/
