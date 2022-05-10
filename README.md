@@ -10,19 +10,10 @@
 -  **A Unix environment** (via Windows Subsytem for Linux if you're on Windows) - I recommend Ubuntu
 -  **Bash** - The main language the pipeline is written in. Almost all Unix enivironments come with bash so you probably don't need to worry about this, unless you already know that you do. Compatible with Bash 3 and greater.
 -  **Conda** - A package manganement/development environment system. It allows setting up and installing other dependencies isolated from the rest of your computer with minimal hassle. I recommend miniconda.
--  **Git** (Optional) - if you want to keep up with updates and bugfixes (depending how actively I am developing), you can use git to create a copy of the pipeline on your local machine which is linked to this repository.
- 
-Check the [project wiki](https://github.com/kew-myco/its_glue/wiki) for install guides for Mac and Windows, including installation of these requirements.
 
 ## Setup
 
-Since this project is very much in development (as of April 2022), I recommend cloning the repository with **git** and regularly using `git pull` so you can keep up with updates.
-
-Once you have all the reqiurements set up, clone the repository into your Unix enivronment using git - `git clone https://github.com/kew-myco/its_glue.git`. You can also download the repository if you don't want to use git. 
-
-In the top level of the created directory run `./scripts/CREATE_ENV.sh` to set up the Conda environment. You'll probably need to chmod +x the scripts first - e.g. `chmod +x ./scripts/CREATE_ENV.sh`, or you'll get `permission denied` errors.
-
-`CREATE_ENV.sh` will have Conda install all the necessary dependencies for you in a self contained Conda environment. It seems the easiest way to ensure everyone is able to run things without having to worry about installing the specific tools the pipeline relies on. This does mean that you have to run all the scripts from within the top-level pipeline directory.
+Check the [project wiki](https://github.com/kew-myco/its_glue/wiki) for install guides for Linux, Windows Subsystem for Linux, and Mac, including installation of requirements.
 
 ## Usage
    
@@ -65,7 +56,7 @@ The script expects, as arguments, a reference database, specified by the `-d` fl
 
 ## Outputs
 
-Please see the [project wiki](https://github.com/kew-myco/its_glue/wiki) for a [guide to output](https://github.com/kew-myco/its_glue/wiki/Guide-to-Output) for each pipeline stage (**part-complete**)
+See the [project wiki](https://github.com/kew-myco/its_glue/wiki) for a guide to outputs for each pipeline stage (**part-complete**)
 
 ## Issues, Comments and Suggestions
 
