@@ -83,11 +83,11 @@ for file in "$trace_dir"/*"$r_tag".* ; do
     # check only a pair of files for given $code
     uchk=$(ls "$trace_dir"/"$code"* | wc -l)
     if [ "$uchk" -gt 2 ] ; then
-        echo "warning: multiple matching filenames detected for "${code}", skipping" >&2
+        echo "multiple matching filenames detected for "${code}", skipping" >> "$out_dir"/logs/basecall_log.txt
         fail_count=$((fail_count + 1))
     fi
     if [ "$uchk" -lt 2 ] ; then
-        echo "warning: single file detected for "${code}", skipping - want to allow single direction basecalling? Submit a feature request at the github." >&2
+        echo "single file (i.e. no pair) detected for "${code}", skipping" >> "$out_dir"/logs/basecall_log.txt
         fail_count=$((fail_count + 1))
     fi
     
@@ -122,7 +122,7 @@ if [ "$trac_count" -eq 0 ] ; then
     exit 1
 fi
 
-echo ""${trac_count}"/"${ftot}" complete, "${fail_count}" failures"
+echo ""${trac_count}"/"${ftot}" complete, "${fail_count}" failures - check logs for failure details"
 
 # STDOUT and STDERR logged
 # no trimming performed with -qurs
@@ -132,12 +132,12 @@ echo ""${trac_count}"/"${ftot}" complete, "${fail_count}" failures"
 
 ### Collate seqs
 
-cat "$out_dir"/assembly/*cons.fa > "$out_dir"/assembly/con_list.fasta
+cat "$out_dir"/assembly/*cons.fa > "$out_dir"/assembly/consensus_seqs.fasta
 
 ###  xtract ITS with ITSx
 echo "running ITSx..."
 if [ -f "$out_dir"/logs/its_log.txt ] ; then > "$out_dir"/logs/its_log.txt ; fi
-ITSx -i "$out_dir"/assembly/con_list.fasta -o "$out_dir"/its/consensus \
+ITSx -i "$out_dir"/assembly/consensus_seqs.fasta -o "$out_dir"/its/consensus \
 -t 'fungi' \
 --graphical F \
 --save_regions 'ITS1,5.8S,ITS2' \
@@ -167,7 +167,7 @@ while read -r p; do
   
   nd_count=$((nd_count + 1))
   
-done < "$out_dir"/its/its_no_detections.txt
+done < "$out_dir"/its/consensus_no_detections.txt
 
 if [[ $nd_count -ne 0 ]] ; then
 echo "no ITS detected in consensus for $nd_count samples, trying single direction strands..."

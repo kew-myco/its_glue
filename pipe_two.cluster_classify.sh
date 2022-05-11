@@ -69,7 +69,7 @@ vsearch --cluster_size "${fasta}" \
 --otutabout "${out_dir}"/cluster_membership.tsv \
 --id "${cid}" \
 --minseqlength 100 \
---sizeorder --clusterout_sort
+--sizeorder --clusterout_sort --strand both
 
 vsearch --sintax "${fasta}" \
 --db "${db}" \
