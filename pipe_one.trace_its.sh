@@ -69,7 +69,7 @@ fi
 # assemble forward and reverse direct from traces
 echo "running Tracy..."
 trac_count=0
-for file in "$trace_dir"/*"$r_tag"* ; do
+for file in "$trace_dir"/*"$r_tag".* ; do
 
     # take full path of file and delete all except filename
     xbase="${file##*/}"
@@ -85,7 +85,7 @@ for file in "$trace_dir"/*"$r_tag"* ; do
     fi
     
     # grab matching file
-    ffile=("$trace_dir"/"$code"*"$f_tag"*)
+    ffile=("$trace_dir"/"$code"*"$f_tag".*)
     
     # assemble - -t 0 -q 100 -u 300 -r 100 -s 300 best so far
     if
