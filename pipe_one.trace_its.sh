@@ -87,11 +87,11 @@ for file in "$trace_dir"/*"$r_tag"* ; do
     # grab matching file
     ffile=("$trace_dir"/"$code"*"$f_tag"*)
     
-    # assemble
+    # assemble - -t 0 -q 100 -u 300 -r 100 -s 300 best so far
     if
-    ./tracy/tracy consensus -i \
+    ./tracy/tracy consensus \
     -o "$out_dir"/assembly/"$code"_cons \
-    -q 0 -u 0 -r 0 -s 0 \
+    -t 2 \
     -b "$code" \
     "$ffile" \
     "$file" \
