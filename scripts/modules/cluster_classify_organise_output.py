@@ -40,7 +40,7 @@ for ind, tax in enumerate(best_ids):
     if tax != 'nan':
         rename_clust.append('{}|{}'.format(cmem.index.values.tolist()[ind], tax))
     else:
-        rename_clust.append('{}|d:Fungi'.format(cmem.index.values.tolist()[ind]))
+        rename_clust.append('{}|d:Fungi(ITSx)'.format(cmem.index.values.tolist()[ind]))
         
 cmem.set_index(pd.Series(rename_clust), inplace = True)
 

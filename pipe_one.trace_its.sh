@@ -41,9 +41,9 @@ if [[ "$out_dir" == "" ]] ; then
 fi
 
 if [[ "$overwrite" == "y" ]] ; then
-    mkdir -p "$out_dir"/assembly "$out_dir"/its "$out_dir"/logs
+    mkdir -p "$out_dir"/assembly "$out_dir"/its
 else
-    mkdir "${out_dir}"/assembly "${out_dir}"/its "${out_dir}"/logs
+    mkdir "${out_dir}"/assembly "${out_dir}"/its
 fi
 
 echo "" # blank line to space output
@@ -68,7 +68,10 @@ fi
 
 # assemble forward and reverse direct from traces
 echo "running Tracy..."
+ftot=$(ls "$trace_dir"/*"$r_tag".* | wc -l)
 trac_count=0
+fail_count=0
+if [ -f "$out_dir"/assembly/basecall_log.txt ] ; then > "$out_dir"/assembly/basecall_log.txt ; fi
 for file in "$trace_dir"/*"$r_tag".* ; do
 
     # take full path of file and delete all except filename
@@ -79,31 +82,37 @@ for file in "$trace_dir"/*"$r_tag".* ; do
     
     # check only a pair of files for given $code
     uchk=$(ls "$trace_dir"/"$code"* | wc -l)
-    if [ "$uchk" -ne 2 ] ; then
-        echo "ERROR: multiple matching filenames detected for $code" >&2
-        exit 1
+    if [ "$uchk" -gt 2 ] ; then
+        echo "warning: multiple matching filenames detected for "${code}", skipping" >&2
+        fail_count=$((fail_count + 1))
+    fi
+    if [ "$uchk" -lt 2 ] ; then
+        echo "warning: single file detected for "${code}", skipping - want to allow single direction basecalling? Submit a feature request at the github." >&2
+        fail_count=$((fail_count + 1))
     fi
     
     # grab matching file
     ffile=("$trace_dir"/"$code"*"$f_tag".*)
     
-    # assemble - -t 0 -q 100 -u 300 -r 100 -s 300 best so far
+    # assemble - -t 2 best trimming so far
     if
     ./tracy/tracy consensus \
     -o "$out_dir"/assembly/"$code"_cons \
-    -t 2 \
+    -t 0 -q 100 -u 500 -r 100 -s 500 \
     -b "$code" \
     "$ffile" \
     "$file" \
-    >> "$out_dir"/logs/basecall_log.txt 2>&1
+    2>> "$out_dir"/logs/basecall_log.txt 1> /dev/null
+    
     then
-
     trac_count=$((trac_count + 1))
 
     else
-    echo "assembly failure for $code!"
+    fail_count=$((fail_count + 1))
     
     fi
+    
+    echo -ne ""${trac_count}"/"${ftot}" complete, "${fail_count}" failures\r"
 
 done
 
@@ -113,7 +122,7 @@ if [ "$trac_count" -eq 0 ] ; then
     exit 1
 fi
 
-echo "assembled $trac_count samples"
+echo ""${trac_count}"/"${ftot}" complete, "${fail_count}" failures"
 
 # STDOUT and STDERR logged
 # no trimming performed with -qurs
@@ -127,13 +136,12 @@ cat "$out_dir"/assembly/*cons.fa > "$out_dir"/assembly/con_list.fasta
 
 ###  xtract ITS with ITSx
 echo "running ITSx..."
-ITSx -i "$out_dir"/assembly/con_list.fasta -o "$out_dir"/its/its \
+if [ -f "$out_dir"/logs/its_log.txt ] ; then > "$out_dir"/logs/its_log.txt ; fi
+ITSx -i "$out_dir"/assembly/con_list.fasta -o "$out_dir"/its/consensus \
 -t 'fungi' \
 --graphical F \
 --save_regions 'ITS1,5.8S,ITS2' \
 --cpu 4 \
---minlen 30 \
->> "$out_dir"/logs/its_log.txt 2>&1
 
 # extract forward and reverse strands from sequences where no ITS could be recognised in the consensus seq
 # init empty array
@@ -169,13 +177,11 @@ printf "%s\n" "${nd_ar[@]}" > "$out_dir"/its/noconits.fa
 
 
 # try ITSx on those
-ITSx -i "$out_dir"/its/noconits.fa -o "$out_dir"/its/sing \
+ITSx -i "$out_dir"/its/noconits.fa -o "$out_dir"/its/single_direction \
 -t 'fungi' \
 --graphical F \
 --save_regions 'ITS1,5.8S,ITS2' \
 --cpu 4 \
---minlen 30 \
->> "$out_dir"/logs/its_log.txt 2>&1
 
 echo "sorting results..."
 
