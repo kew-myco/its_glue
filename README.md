@@ -26,7 +26,8 @@ The first section of the pipeline handles basecalling the input trace files usin
 This functionality is all wrapped into a single script:
 
 ```
-./pipe_one.trace_its.sh -t path/to/traces/directory \
+./pipe_one.trace_its.sh \
+-t path/to/traces/directory \
 -f fw_tag \
 -r rev_tag \
 -o path/to/output
@@ -48,7 +49,8 @@ The second section of the pipeline handles OTU picking. It first clusters sequen
 The functionality is wrapped into a single script:
 
 ```
-./pipe_two.cluster_classify.sh -d path/to/reference/database \
+./pipe_two.cluster_classify.sh \
+-d path/to/reference/database \
 -f path/to/input/fasta \
 -o path/to/output
 ```
