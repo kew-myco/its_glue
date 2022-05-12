@@ -69,6 +69,7 @@ fi
 # assemble forward and reverse direct from traces
 echo "running Tracy..."
 ftot=$(ls "$trace_dir"/*"$r_tag".* | wc -l)
+if [ $ftot -eq 0 ] ; then echo "ERROR: 0 trace files detected using given -r tag" >&2 ; exit 1 ; fi
 trac_count=0
 fail_count=0
 if [ -f "$out_dir"/assembly/basecall_log.txt ] ; then > "$out_dir"/assembly/basecall_log.txt ; fi
@@ -83,26 +84,29 @@ for file in "$trace_dir"/*"$r_tag".* ; do
     # check only a pair of files for given $code
     uchk=$(ls "$trace_dir"/"$code"* | wc -l)
     if [ "$uchk" -gt 2 ] ; then
-        echo "multiple matching filenames detected for "${code}", skipping" >> "$out_dir"/logs/basecall_log.txt
+        echo "multiple matching filenames detected for "${code}", skipping" >> "$out_dir"/assembly/basecall_log.txt
         fail_count=$((fail_count + 1))
+        continue
     fi
     if [ "$uchk" -lt 2 ] ; then
-        echo "single file (i.e. no pair) detected for "${code}", skipping" >> "$out_dir"/logs/basecall_log.txt
+        echo "single file (no -f) detected for "${code}", skipping" >> "$out_dir"/assembly/basecall_log.txt
         fail_count=$((fail_count + 1))
+        continue
     fi
     
     # grab matching file
     ffile=("$trace_dir"/"$code"*"$f_tag".*)
     
-    # assemble - -t 2 best trimming so far
+    # assemble - -t 2 best trimming so far. -qurs tbc -q 100 -u 500 -r 100 -s 500
     if
     ./tracy/tracy consensus \
     -o "$out_dir"/assembly/"$code"_cons \
-    -t 0 -q 100 -u 500 -r 100 -s 500 \
+    -p 0.5 \
+    -t 2  \
     -b "$code" \
     "$ffile" \
     "$file" \
-    2>> "$out_dir"/logs/basecall_log.txt 1> /dev/null
+    2>> "$out_dir"/assembly/basecall_log.txt 1> /dev/null
     
     then
     trac_count=$((trac_count + 1))
@@ -112,7 +116,7 @@ for file in "$trace_dir"/*"$r_tag".* ; do
     
     fi
     
-    echo -ne ""${trac_count}"/"${ftot}" complete, "${fail_count}" failures\r"
+    echo -ne ""${trac_count}"/"${ftot}" assembled, "${fail_count}" failures\r"
 
 done
 
@@ -122,7 +126,7 @@ if [ "$trac_count" -eq 0 ] ; then
     exit 1
 fi
 
-echo ""${trac_count}"/"${ftot}" complete, "${fail_count}" failures - check logs for failure details"
+echo ""${trac_count}"/"${ftot}" assembled, "${fail_count}" failures - check logs for failure details"
 
 # STDOUT and STDERR logged
 # no trimming performed with -qurs
@@ -136,7 +140,6 @@ cat "$out_dir"/assembly/*cons.fa > "$out_dir"/assembly/consensus_seqs.fasta
 
 ###  xtract ITS with ITSx
 echo "running ITSx..."
-if [ -f "$out_dir"/logs/its_log.txt ] ; then > "$out_dir"/logs/its_log.txt ; fi
 ITSx -i "$out_dir"/assembly/consensus_seqs.fasta -o "$out_dir"/its/consensus \
 -t 'fungi' \
 --graphical F \
@@ -196,6 +199,6 @@ python3 ./scripts/modules/itsx_its_cat.py \
 "$out_dir/its/its1.merge.fa" \
 "$out_dir/its/5_8S.merge.fa" \
 "$out_dir/its/its2.merge.fa" \
--op "$out_dir/its/ALL_ITS.fa"
+-op "$out_dir/its/all_ITS_seqs.fa"
 
 echo "done!"
