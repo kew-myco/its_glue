@@ -89,7 +89,7 @@ for file in "$trace_dir"/*"$r_tag".* ; do
         continue
     fi
     if [ "$uchk" -lt 2 ] ; then
-        echo "single file (no -f) detected for "${code}", skipping" >> "$out_dir"/assembly/basecall_log.txt
+        echo "single file (no pair) detected for "${code}", skipping" >> "$out_dir"/assembly/basecall_log.txt
         fail_count=$((fail_count + 1))
         continue
     fi
@@ -176,11 +176,11 @@ if [[ $nd_count -ne 0 ]] ; then
 echo "no ITS detected in consensus for $nd_count samples, trying single direction strands..."
 fi
 
-printf "%s\n" "${nd_ar[@]}" > "$out_dir"/its/noconits.fa
+printf "%s\n" "${nd_ar[@]}" > "$out_dir"/its/consensus_no_detections.fa
 
 
 # try ITSx on those
-ITSx -i "$out_dir"/its/noconits.fa -o "$out_dir"/its/single_direction \
+ITSx -i "$out_dir"/its/consensus_no_detections.fa -o "$out_dir"/its/single_direction \
 -t 'fungi' \
 --graphical F \
 --save_regions 'ITS1,5.8S,ITS2' \
@@ -189,16 +189,22 @@ ITSx -i "$out_dir"/its/noconits.fa -o "$out_dir"/its/single_direction \
 echo "sorting results..."
 
 # cat results - drop those we can't find ITS for, this is our major quality filter
+#join ITS1 5.8S ITS2 per sample
+# for consensus only
+python3 ./scripts/modules/itsx_its_cat.py \
+"$out_dir/its/consensus.ITS1.fasta" \
+"$out_dir/its/consensus.5_8S.fasta" \
+"$out_dir/its/consensus.ITS2.fasta" \
+-op "$out_dir/its/consensus.full_ITS_seqs.fa"
+
 cat "$out_dir"/its/*ITS1* > "$out_dir"/its/its1.merge.fa
 cat "$out_dir"/its/*5_8S* > "$out_dir"/its/5_8S.merge.fa
 cat "$out_dir"/its/*ITS2* > "$out_dir"/its/its2.merge.fa
 
-
-#join ITS1 5.8S ITS2 per sample
 python3 ./scripts/modules/itsx_its_cat.py \
 "$out_dir/its/its1.merge.fa" \
 "$out_dir/its/5_8S.merge.fa" \
 "$out_dir/its/its2.merge.fa" \
--op "$out_dir/its/all_ITS_seqs.fa"
+-op "$out_dir/its/all.full_ITS_seqs.fa"
 
 echo "done!"

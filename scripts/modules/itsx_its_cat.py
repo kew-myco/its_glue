@@ -24,28 +24,44 @@ with open(args.its1, 'r') as f1, open(args.fives, 'r') as fs, open(args.its2, 'r
     its1 = f1.readlines()
     fives = fs.readlines()
     its2 = f2.readlines()
+
+onefivetwo = []
+chk_patterns=['ITS1', '5.8S', 'ITS2']
+for ind, reg in enumerate([its1, fives, its2]):
+    names = reg[0::2]
+    if not all([re.search(chk_patterns[ind], n) for n in names]):
+        raise RuntimeError("unexpected ITS region detected (e.g. 'ITS2' where 'ITS1' was expected)")
+    seqs = reg[1::2]
+    ids = [re.search('>(.+?)\|', n).group(1) for n in names]
+    recs = list(zip(ids, seqs))
+    onefivetwo.append(recs)
+
     
-names = [x[0::2] for x in [its1, fives, its2]]
-seqs = [x[1::2] for x in [its1, fives, its2]]
-
-#flatten
-flat_names = [n for sl in names for n in sl]
-flat_seqs = [n for sl in seqs for n in sl]
-
-# extract sample ids
-ids = [re.search('>(.+?)\|', n).group(1) for n in flat_names]
-
-# merge ids and seqs
-recs = list(zip(ids, flat_seqs))
+all_names=[x[0::2] for x in [its1, fives, its2]]
+flat_names=[n for sl in all_names for n in sl]
+all_ids=[re.search('>(.+?)\|', n).group(1) for n in flat_names]
+set_ids=set(all_ids)
 
 # init empty dict
 seq_dict={}
 # add seqs to dict values matching by id
-for key in set(ids) :
-    its_parts = [rec[1] for rec in recs if key in rec]
+for key in all_ids :
+    
+    # prevent chimera formation
+    if any(key in st for st in onefivetwo[0]) and any(key in st for st in onefivetwo[2]):
+        if not any(key in st for st in onefivetwo[1]):
+            next
+    
+    partone = [rec[1] for rec in onefivetwo[0] if key in rec]
+    partfive = [rec[1] for rec in onefivetwo[1] if key in rec]
+    parttwo = [rec[1] for rec in onefivetwo[2] if key in rec]
+    if any([True for x in [partone, partfive, parttwo] if len(x) > 1]):
+        raise RuntimeError('multiple ITS seqs detected for a single sample code!')
+    
+    its_parts = partone + partfive + parttwo
     its_full = ''.join(its_parts)
     its_full = its_full.replace('\n', '')
-    seq_dict[key] = its_full
+    seq_dict[key] = its_parts
     
 # filter out empty ids
 seq_dict = {k: v for k, v in seq_dict.items() if v}
