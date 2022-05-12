@@ -31,7 +31,6 @@ do
     esac
 done
 
-#(TODO: make flags c and x do more things)
 if [[ "$db" == "" || "$fasta" == "" ]] ; then
     echo "ERROR: flags -d and -f require arguments." >&2
     exit 1
@@ -42,12 +41,12 @@ if [[ "$out_dir" == "" ]] ; then
 fi
 
 if [ "$cid" == "" ] ; then
-    echo "warning: no clustering id provided (-c), defaulting to 0.97" >&2
+    echo "no clustering id provided (-c), defaulting to 0.97" >&2
     cid=0.97
 fi
 
 if [ "$sco" == "" ] ; then
-    echo "warning: no sintax bootstrap cutoff provided (-s), defaulting to 0.6" >&2
+    echo "no sintax bootstrap cutoff provided (-s), defaulting to 0.6" >&2
     sco=0.6
 fi
 
@@ -76,6 +75,9 @@ vsearch --sintax "${fasta}" \
 --sintax_cutoff "${sco}" \
 --tabbedout "${out_dir}"/sintax_classifications.tsv
 
-python3 ./scripts/modules/cluster_classify_organise_output.py "${out_dir}"/sintax_classifications.tsv "${out_dir}"/cluster_membership.tsv "${out_dir}"/clusters_with_taxonomy.csv
+python3 ./scripts/modules/cluster_classify_organise_output.py \
+"${out_dir}"/sintax_classifications.tsv \
+"${out_dir}"/cluster_membership.tsv \
+"${out_dir}"/clusters_with_taxonomy.csv
 
 

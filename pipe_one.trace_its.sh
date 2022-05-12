@@ -97,11 +97,11 @@ for file in "$trace_dir"/*"$r_tag".* ; do
     # grab matching file
     ffile=("$trace_dir"/"$code"*"$f_tag".*)
     
-    # assemble - -t 2 best trimming so far. -qurs tbc -q 100 -u 500 -r 100 -s 500
+    # assemble - -t 2 best trimming so far in terms of result. -qurs tbc -q 100 -u 500 -r 100 -s 500. -qurs equal is appealing... getting the right -p might be valuable
     if
     ./tracy/tracy consensus \
     -o "$out_dir"/assembly/"$code"_cons \
-    -p 0.5 \
+    -p 0.3 \
     -t 2  \
     -b "$code" \
     "$ffile" \
@@ -145,6 +145,7 @@ ITSx -i "$out_dir"/assembly/consensus_seqs.fasta -o "$out_dir"/its/consensus \
 --graphical F \
 --save_regions 'ITS1,5.8S,ITS2' \
 --cpu 4 \
+--temp "$out_dir"
 
 # extract forward and reverse strands from sequences where no ITS could be recognised in the consensus seq
 # init empty array
@@ -176,17 +177,24 @@ if [[ $nd_count -ne 0 ]] ; then
 echo "no ITS detected in consensus for $nd_count samples, trying single direction strands..."
 fi
 
-printf "%s\n" "${nd_ar[@]}" > "$out_dir"/its/consensus_no_detections.fa
+printf "%s\n" "${nd_ar[@]}" > "$out_dir"/its/consensus_no_detections.fasta
 
 
 # try ITSx on those
-ITSx -i "$out_dir"/its/consensus_no_detections.fa -o "$out_dir"/its/single_direction \
+ITSx -i "$out_dir"/its/consensus_no_detections.fasta -o "$out_dir"/its/single_direction \
 -t 'fungi' \
 --graphical F \
 --save_regions 'ITS1,5.8S,ITS2' \
 --cpu 4 \
+--temp "$out_dir"
 
 echo "sorting results..."
+
+cat "$out_dir"/its/*ITS1* > "$out_dir"/its/its1.merge.fasta
+cat "$out_dir"/its/*5_8S* > "$out_dir"/its/5_8S.merge.fasta
+cat "$out_dir"/its/*ITS2* > "$out_dir"/its/its2.merge.fasta
+
+echo "sorting consensus..."
 
 # cat results - drop those we can't find ITS for, this is our major quality filter
 #join ITS1 5.8S ITS2 per sample
@@ -195,16 +203,16 @@ python3 ./scripts/modules/itsx_its_cat.py \
 "$out_dir/its/consensus.ITS1.fasta" \
 "$out_dir/its/consensus.5_8S.fasta" \
 "$out_dir/its/consensus.ITS2.fasta" \
--op "$out_dir/its/consensus.full_ITS_seqs.fa"
+-n "consensus.merged_ITS_seqs.fasta" \
+-od "$out_dir/its/"
 
-cat "$out_dir"/its/*ITS1* > "$out_dir"/its/its1.merge.fa
-cat "$out_dir"/its/*5_8S* > "$out_dir"/its/5_8S.merge.fa
-cat "$out_dir"/its/*ITS2* > "$out_dir"/its/its2.merge.fa
+echo "sorting all..."
 
 python3 ./scripts/modules/itsx_its_cat.py \
-"$out_dir/its/its1.merge.fa" \
-"$out_dir/its/5_8S.merge.fa" \
-"$out_dir/its/its2.merge.fa" \
--op "$out_dir/its/all.full_ITS_seqs.fa"
+"$out_dir/its/its1.merge.fasta" \
+"$out_dir/its/5_8S.merge.fasta" \
+"$out_dir/its/its2.merge.fasta" \
+-n "all.merged_ITS_seqs.fasta" \
+-od "$out_dir/its/"
 
 echo "done!"

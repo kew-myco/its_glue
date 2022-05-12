@@ -10,15 +10,21 @@ from Bio import SeqIO
 from Bio import Seq
 from argparse import ArgumentParser
 import re
+# import logging
 
 parser = ArgumentParser()
 parser.add_argument("its1", help="path to input ITS1 fasta")
 parser.add_argument("fives", help="path to input 5.8S fasta")
 parser.add_argument("its2", help="path to input ITS2 fasta")
-parser.add_argument('--name', help="output file name")
-parser.add_argument("-op", help="output path")
-
+parser.add_argument('-n', help="output file name")
+parser.add_argument("-od", help="output directory")
 args = parser.parse_args()
+
+# logging.basicConfig(filename= args.od + args.n + '.log', encoding='utf-8', level=logging.DEBUG)
+# logging.debug('This message should go to the log file')
+# logging.info('So should this')
+# logging.warning('And this, too')
+# logging.error('And non-ASCII stuff, too, like Øresund and Malmö')
 
 with open(args.its1, 'r') as f1, open(args.fives, 'r') as fs, open(args.its2, 'r') as f2 :
     its1 = f1.readlines()
@@ -61,7 +67,7 @@ for key in all_ids :
     its_parts = partone + partfive + parttwo
     its_full = ''.join(its_parts)
     its_full = its_full.replace('\n', '')
-    seq_dict[key] = its_parts
+    seq_dict[key] = its_full
     
 # filter out empty ids
 seq_dict = {k: v for k, v in seq_dict.items() if v}
@@ -69,21 +75,18 @@ seq_dict = {k: v for k, v in seq_dict.items() if v}
 # convert to iterable of seqrecords
 sr_gen = (SeqIO.SeqRecord(seq=Seq.Seq(value), id=key, description='') for key, value in seq_dict.items())
 
-if args.op :
-    with open(args.op, 'w') as sout :
+if args.od :
+    with open(args.od + args.n, 'w') as sout :
         SeqIO.write(sr_gen, sout, 'fasta-2line')
 else :
-    with open('./cat_its.fasta', 'w') as sout :
+    with open('./' + args.n, 'w') as sout :
         SeqIO.write(sr_gen, sout, 'fasta-2line')
         
         
 # testing        
-# with open('./data/its_out/its.ITS1.fasta') as f:
-#     t1 = f.readlines()
-# with open('./data/its_out/its.5_8S.fasta') as f:
-#     t5 = f.readlines()
-# with open('./data/its_out/its.ITS2.fasta') as f:
-#     t2 = f.readlines()
-
-# names = [x[0::2] for x in [t1, t5, t2]]
-# seqs = [x[1::2] for x in [t1, t5, t2]]
+# with open('/home/blex/Documents/Kew/fungi_research/sietse_era_seqs/pipeline_testing/pine/its/consensus.ITS1.fasta') as f:
+#     its1 = f.readlines()
+# with open('/home/blex/Documents/Kew/fungi_research/sietse_era_seqs/pipeline_testing/pine/its/consensus.5_8S.fasta') as f:
+#     fives = f.readlines()
+# with open('/home/blex/Documents/Kew/fungi_research/sietse_era_seqs/pipeline_testing/pine/its/consensus.ITS2.fasta') as f:
+#     its2 = f.readlines()
