@@ -101,7 +101,7 @@ for file in "$trace_dir"/*"$r_tag".* ; do
     if
     ./tracy/tracy consensus \
     -o "$out_dir"/assembly/"$code"_cons \
-    -p 0.3 \
+    -p 0.4 \
     -t 2  \
     -b "$code" \
     "$ffile" \
