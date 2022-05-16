@@ -215,4 +215,8 @@ python3 ./scripts/modules/itsx_its_cat.py \
 -n "all.merged_ITS_seqs.fasta" \
 -od "$out_dir/its/"
 
+rm "$out_dir"/its/its1.merge.fasta
+rm "$out_dir"/its/5_8S.merge.fasta
+rm "$out_dir"/its/its2.merge.fasta
+
 echo "done!"
