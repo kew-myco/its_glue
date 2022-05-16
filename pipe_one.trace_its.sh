@@ -97,7 +97,7 @@ for file in "$trace_dir"/*"$r_tag".* ; do
     # grab matching file
     ffile=("$trace_dir"/"$code"*"$f_tag".*)
     
-    # assemble - -t 2 best trimming so far in terms of result. -qurs tbc -q 100 -u 500 -r 100 -s 500. -qurs equal is appealing... getting the right -p might be valuable
+    # assemble
     if
     ./tracy/tracy consensus \
     -o "$out_dir"/assembly/"$code"_cons \
@@ -126,7 +126,7 @@ if [ "$trac_count" -eq 0 ] ; then
     exit 1
 fi
 
-echo ""${trac_count}"/"${ftot}" assembled, "${fail_count}" failures - check logs for failure details"
+echo ""${trac_count}"/"${ftot}" assembled, "${fail_count}" failures - check logs for any failure details"
 
 # STDOUT and STDERR logged
 # no trimming performed with -qurs
