@@ -5,12 +5,6 @@
 
 `its_glue` is a pipeline to batch process pairs of forward and reverse chromatagrams produced via Sanger sequencing. It wraps powerful tools into a simple workflow, and outputs collated, organised results. The pipeline covers basecalling, assembly of forward and reverse reads, ITS extraction, quality control, and OTU picking.
 
-## Requirements
-
--  **A Unix environment** (via Windows Subsytem for Linux if you're on Windows) - I recommend Ubuntu
--  **Bash** - The main language the pipeline is written in. Almost all Unix enivironments come with bash so you probably don't need to worry about this, unless you already know that you do. Compatible with Bash 3 and greater.
--  **Conda** - A package manganement/development environment system. It allows setting up and installing other dependencies isolated from the rest of your computer with minimal hassle. I recommend miniconda.
-
 ## Setup
 
 Check the [project wiki](https://github.com/kew-myco/its_glue/wiki) for install guides for Linux, Windows Subsystem for Linux, and Mac, including installation of requirements. I recommend running the pipeline on Linux.
