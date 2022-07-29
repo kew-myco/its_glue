@@ -16,6 +16,8 @@
 
 set -e
 
+out_dir="."
+
 while getopts d:f:o:c:s: flag
 do
     case "${flag}" in
@@ -34,10 +36,6 @@ done
 if [[ "$db" == "" || "$fasta" == "" ]] ; then
     echo "ERROR: flags -d and -f require arguments." >&2
     exit 1
-fi
-
-if [[ "$out_dir" == "" ]] ; then
-    out_dir='.'
 fi
 
 if [ "$cid" == "" ] ; then

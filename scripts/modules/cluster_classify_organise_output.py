@@ -6,57 +6,87 @@ Created on Fri Apr 22 12:52:08 2022
 @author: blex
 """
 
+from __future__ import annotations
+import sys
 import pandas as pd
+from functools import partial
 from argparse import ArgumentParser
 
-parser = ArgumentParser()
-parser.add_argument("sintax_class", help="path to input sintax classifications")
-parser.add_argument("cluster_membership", help="path to cluster membership table")
-parser.add_argument("op", help="output path")
+# handle input
+def handle_read(input_path, namestring: str, read_func) -> pd.DataFrame:
+    try:
+        with open(input_path) as i:
+            f = read_func(i)
+    except Exception as e:
+        print(e)
+        sys.exit("Could not read {} from file!".format(namestring))
+    if any(f.shape) == 0:
+        sys.exit("{} empty!".format(namestring))
+    return(f)
 
-args = parser.parse_args()
 
-with open(args.sintax_class) as sc, open(args.cluster_membership) as cm:
-    clsif = pd.read_csv(sc, sep = '\t', header=None, names=list('abcde'))
-    cmem = pd.read_csv(cm, sep = '\t', index_col=0)
+# get deepest classification of cluster
+def best_id(cluster_members: list[str], classifications: list[str]) -> list[str]:
+    ids_list = []
+    for member in cluster_members:
+        try:
+            mem_id = [cl[3] for cl in classifications if member in cl][0]
+        except IndexError:
+            print("cannot find cluster member {} in classifications, skipping".format(member))
+            mem_id = 'nan'
+        ids_list.append(mem_id)
+    return(max(ids_list, key=lambda x: len(x.split(','))))
 
-clsif = clsif.values.tolist()
-clsif = [[str(x) for x in row] for row in clsif]
 
-best_ids = []
-for row_index in range(cmem.shape[0]):
-    members = cmem.iloc[row_index,:].loc[lambda x: x == 1].index.values.tolist()
-    ids_list  = []
-    ids_len = []
-    for member in members:
-        mem_id = [cl[3] for cl in clsif if member in cl]
-        ids_list.append(mem_id[0])
-        ids_len.append(len(mem_id[0].split(',')))
-        
-    best_ids.append(ids_list[ids_len.index(max(ids_len))])
-    
-rename_clust = []
-for ind, tax in enumerate(best_ids):
-    if tax != 'nan':
-        rename_clust.append('{}|{}'.format(cmem.index.values.tolist()[ind], tax))
-    else:
-        rename_clust.append('{}|d:Fungi(ITSx)'.format(cmem.index.values.tolist()[ind]))
-        
-cmem.set_index(pd.Series(rename_clust), inplace = True)
+if __name__ == "__main__":
+    parser = ArgumentParser()
+    parser.add_argument("sintax_class", help="path to input sintax classifications")
+    parser.add_argument("cluster_membership", help="path to cluster membership table")
+    parser.add_argument("op", help="output path")
+    args = parser.parse_args()
 
-with open(args.op, 'w') as o:
-    cmem.to_csv(o)
+    # handle input
+    clsif_read = partial(pd.read_csv, sep='\t', header=None, names=list('abcde'))
+    clsif = handle_read(args.sintax_class, namestring='classifications', read_func=clsif_read)
+    cluster_read = partial(pd.read_csv, sep='\t', index_col=0)
+    clusters = handle_read(args.cluster_membership, namestring='classifications', read_func=cluster_read)
 
-# merge duplicated SHs into single clusters!
-# filter dataframe of cluster membership by SH, and sum for duplicated SHs (i.e. more than one row)
-        
+    # format classifications
+    try:
+        clsif: list = clsif.values.tolist()  # I clearly don't like pandas
+        clsif: list[str] = [[str(x) for x in row] for row in clsif]  # convert to string
+    except (TypeError, ValueError) as e:
+        print(e)
+        sys.exit("Error formatting input classification file")
 
+    # get best ids for each cluster
+    best_ids: list = []
+    for row_index in range(clusters.shape[0]):
+        single_cluster: list = clusters.iloc[row_index, :].loc[lambda x: x == 1].index.values.tolist()  # Sample IDs for one cluster (row)
+        best_ids.append(best_id(cluster_members=single_cluster, classifications=clsif))
+
+    # make annotated cluster names
+    annotated_names: list = []
+    for ind, tax in enumerate(best_ids):
+        if tax == 'nan':
+            annotated_names.append('{}|d:Fungi(ITSx)'.format(clusters.index.values.tolist()[ind]))
+        else:
+            annotated_names.append('{}|{}'.format(clusters.index.values.tolist()[ind], tax))
+
+     # annotate clusters
+    clusters.set_index(pd.Series(annotated_names), inplace=True)
+
+    # write out
+    try:
+        with open(args.op, 'w') as o:
+            clusters.to_csv(o)
+    except Exception as e:
+        print(e)
+        sys.exit("Error writing annotated clusters to file")
 
 
 # testing data
-
-# with open('/home/blex/Documents/Kew/fungi_research/genetics/seq_pipeline/bugfix/out_21.04.22/otu/sintax_classifications.tsv') as sc:
-#     clsif = pd.read_csv(sc, sep = '\t', header=None, names=list('abcde'))
-    
-# with open('/home/blex/Documents/Kew/fungi_research/genetics/seq_pipeline/bugfix/out_21.04.22/otu/cluster_membership.tsv') as cm:
-#    cmem = pd.read_csv(cm, sep = '\t', index_col=0)
+# clsif_read = partial(pd.read_csv, sep='\t', header=None, names=list('abcde'))
+# clsif = handle_read('sintax_classifications.tsv', namestring='classifications', read_func=clsif_read)
+# cluster_read = partial(pd.read_csv, sep='\t', index_col=0)
+# clusters = pd.read_csv('cluster_membership.tsv', sep='\t', index_col=0)
